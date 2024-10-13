@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Reseñas del Libro</title> <!-- Título dinámico -->
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .reseña { border: 1px solid #ddd; padding: 10px; margin: 10px; background-color: #f9f9f9; }
+    .reseña h4 { margin: 0; }
+  </style>
+</head>
+<body>
+  <h1 id="titulo-resenas">Reseñas</h1> <!-- Encabezado que se actualizará dinámicamente -->
+  <div id="reseñas-container"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Función para obtener el título del libro y las reseñas
+    async function obtenerReseñasYActualizarTitulo(tituloLibro) {
+      // Obtener el documento del libro usando su título
+      const libroQuery = query(collection(db, "Libros"), where("Titulo", "==", tituloLibro));
+      const libroSnapshot = await getDocs(libroQuery);
+
+      if (!libroSnapshot.empty) {
+        const libro = libroSnapshot.docs[0].data();
+        const tituloLibroEncontrado = libro.Titulo;
+
+        // Cambiar el título de la página
+        document.getElementById("page-title").textContent = `Reseñas de ${tituloLibroEncontrado}`;
+        document.getElementById("titulo-resenas").textContent = `Reseñas de "${tituloLibroEncontrado}"`; // Cambia el texto del h1
+
+        // Llamar a la función para mostrar reseñas usando el id del libro
+        await mostrarReseñas(libroSnapshot.docs[0].id); // Cambiar a 'libroSnapshot.docs[0].id' para obtener el ID del libro
+      } else {
+        console.error("Libro no encontrado");
+        document.getElementById("titulo-resenas").textContent = "No se encontró el libro."; // Mensaje de error
+      }
+    }
+
+    async function mostrarReseñas(libroId) {
+      const container = document.getElementById("reseñas-container");
+      container.innerHTML = "";  // Limpia el contenedor antes de agregar las reseñas
+
+      // Consulta para obtener reseñas del libro específico usando libro_id
+      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", libroId));
+      const reseñasSnapshot = await getDocs(reseñasQuery);
+
+      console.log(`Número de reseñas encontradas: ${reseñasSnapshot.size}`);
+
+      if (reseñasSnapshot.empty) {
+        const noReseñas = document.createElement("p");
+        noReseñas.textContent = "No hay reseñas para este libro.";
+        container.appendChild(noReseñas);
+        return;
+      }
+
+      reseñasSnapshot.forEach((reseñaDoc) => {
+        const reseña = reseñaDoc.data();
+        const reseñaDiv = document.createElement("div");
+        reseñaDiv.className = "reseña";
+        reseñaDiv.innerHTML = `
+          <h4>Reseña de ${reseña.usuario_id}</h4>
+          <p>Puntuación: ${reseña.puntuacion}</p>
+          <p>${reseña.texto}</p>
+        `;
+        container.appendChild(reseñaDiv);
+      });
+    }
+
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        tituloLibro: params.get('titulo'), // Cambia 'libroId' a 'titulo'
+      };
+    }
+
+    // En la función que se ejecuta al cargar la página
+    window.onload = async function() {
+      const { tituloLibro } = getQueryParams();
+      if (tituloLibro) {
+        await obtenerReseñasYActualizarTitulo(tituloLibro);
+      } else {
+        console.error("No se proporcionó un título de libro.");
+      }
+    };
+  </script>
+</body>
+</html>

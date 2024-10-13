@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .libro {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px;
+      background-color: #f9f9f9; /* Color de fondo para visualizar mejor */
+    }
+    .libro h3 { margin: 0; }
+    a { color: blue; text-decoration: underline; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>BookAffinity</h1>
+
+  <!-- Botón para Agregar Libro -->
+  <button id="add-book-button">Agregar Libro</button>
+
+  <!-- Contenedor para mostrar los libros -->
+  <h2>Listado de libros</h2>
+  <div id="libros-container" style="display:none;"></div> <!-- Ocultar inicialmente -->
+
+  <!-- Botón para cerrar sesión -->
+  <button id="logout-button" style="display:none;">Cerrar Sesión</button>
+  
+  <!-- Cargar Firebase como un módulo -->
+  <script type="module">
+    // Importar las bibliotecas de Firebase desde el CDN usando ESModules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, setDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { Timestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Configuración de Firebase para conectar con tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    console.log("Firebase inicializado");
+
+    // Verificar el estado de autenticación
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+        document.getElementById('logout-button').style.display = 'block'; // Mostrar el botón de cerrar sesión
+        mostrarlibrosEnHTML(); // Cargar libros al iniciar sesión
+        document.getElementById('libros-container').style.display = 'block'; // Mostrar el contenedor de libros
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+    // Función para obtener y mostrar la lista de libros
+    async function mostrarlibrosEnHTML() {
+      console.log("Cargando libros...");
+      const container = document.getElementById("libros-container");
+      container.innerHTML = "";  // Limpia el contenedor antes de agregar los datos
+
+      // Obtiene la colección de libros de Firestore
+      const querySnapshot = await getDocs(collection(db, "Libros"));
+      console.log(`Documentos encontrados: ${querySnapshot.docs.length}`); // Log de cantidad de documentos
+
+      for (const doc of querySnapshot.docs) {
+        const libro = doc.data();
+        const libroDiv = document.createElement("div");
+        libroDiv.className = "libro";
+        libroDiv.innerHTML = `
+          <h3>${libro.Titulo} (${libro.Fecha})</h3>
+          <p>Autor: ${libro.Autor}</p>
+          <p>Género: ${libro.Genero}</p>
+          <p>Sinopsis: ${libro.Sinopsis}</p>
+          <h4>Reseñas:</h4>
+          <a href="reseñas.html?libroId=${doc.id}">Ver Reseñas</a>
+          <p>Puntuación Media: ${libro.PuntMedia ? libro.PuntMedia : 'No disponible'}</p>
+        `;
+        container.appendChild(libroDiv);
+      }
+    }
+
+    // Función para calcular y actualizar la puntuación media
+    async function calcularPuntuacionesMedias() {
+      const librosRef = collection(db, "Libros");
+      const librosSnapshot = await getDocs(librosRef);
+      
+      for (const libroDoc of librosSnapshot.docs) {
+        const libroId = libroDoc.id;
+
+        // Obtener todas las reseñas para el libro actual
+        const reseñasQuery = query(collection(db, "Resenas"), where("libroId", "==", libroId));
+        const reseñasSnapshot = await getDocs(reseñasQuery);
+        
+        let totalPuntuacion = 0;
+        let cantidadResenas = 0;
+
+        // Sumar las puntuaciones de las reseñas
+        reseñasSnapshot.forEach(reseñaDoc => {
+          const puntuacion = reseñaDoc.data().puntuacion; // Asegúrate de que este campo existe
+          if (typeof puntuacion === 'number') {
+            totalPuntuacion += puntuacion; // Asegúrate de que sea un número
+            cantidadResenas++;
+          } else {
+            console.error(`La puntuación no es un número para la reseña ${reseñaDoc.id}:`, puntuacion);
+          }
+        });
+
+        // Calcular la puntuación media
+        const puntuacionMedia = cantidadResenas > 0 ? totalPuntuacion / cantidadResenas : 0;
+
+        // Actualizar el libro con la nueva puntuación media
+        await updateDoc(libroDoc.ref, {
+          PuntMedia: puntuacionMedia // Asegúrate de que el campo 'PuntMedia' exista en los documentos
+        });
+
+        console.log(`Actualizada la puntuación media para el libro ${libroDoc.data().Titulo}: ${puntuacionMedia}`);
+      }
+    }
+
+    // Evento para redirigir al agregar un nuevo libro
+    document.getElementById("add-book-button").addEventListener("click", () => {
+      window.location.href = "agregaLibros.html"; // Redirigir a la página de agregar libro
+    });
+
+    // Evento para cerrar sesión
+    document.getElementById("logout-button").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        console.log("Usuario desconectado.");
+        window.location.href = "Prueba.html"; // Redirigir a la página de inicio de sesión
+      }).catch((error) => {
+        console.error("Error al cerrar sesión:", error);
+      });
+    });
+
+  </script>
+</body>
+</html>

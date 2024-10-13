@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity - Novedades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #e0e0d3;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      color: #000; /* Cambiar el color del título para mejor visibilidad */
+    }
+
+    .books-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      max-width: 100%;
+    }
+
+    /* Contenedor de los libros con desplazamiento horizontal */
+    .books-container {
+      display: flex;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      padding: 20px 0;
+      width: 100%;
+    }
+
+    .libro {
+      background-color: rgba(255, 255, 255, 0.9); /* Fondo ligeramente transparente */
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 0 10px;
+      flex: 0 0 auto;
+      width: 150px; /* Ajustar el tamaño del box de los libros */
+      text-align: center;
+    }
+
+    .libro img {
+      width: 100%; /* La imagen ahora ocupará todo el ancho disponible */
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      max-height: 150px; /* Limitar la altura de la imagen */
+      object-fit: cover; /* Ajustar la imagen dentro del box */
+    }
+
+    .libro h3 {
+      font-size: 0.9rem; /* Reducir el tamaño del título */
+      margin: 0 0 5px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #333;
+    }
+
+    .libro p {
+      font-size: 0.8rem; /* Reducir el tamaño del texto */
+      color: #666;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .libro a {
+      text-decoration: none;
+      color: #007BFF;
+      font-weight: 500;
+    }
+
+    .libro a:hover {
+      text-decoration: underline;
+    }
+
+    /* Botones de navegación */
+    .scroll-btn {
+      background-color: transparent;
+      border: none;
+      font-size: 3.5rem; /* Aumentar el tamaño del símbolo */
+      cursor: pointer;
+      z-index: 1;
+      padding: 10px;
+      color: black; /* Mantener el color negro */
+    }
+
+    .scroll-btn.left {
+      position: absolute;
+      left: 0;
+    }
+
+    .scroll-btn.right {
+      position: absolute;
+      right: 0;
+    }
+
+    .scroll-btn:hover {
+      color: #333;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>BookAffinity - Novedades</h1>
+
+  <div class="books-section">
+    <!-- Botón de desplazamiento a la izquierda -->
+    <button class="scroll-btn left" id="btn-left">&#8249;</button>
+
+    <!-- Contenedor para mostrar los libros -->
+    <div id="novedades-container" class="books-container"></div>
+
+    <!-- Botón de desplazamiento a la derecha -->
+    <button class="scroll-btn right" id="btn-right">&#8250;</button>
+  </div>
+
+  <h1>BookAffinity - Recomendaciones</h1>
+
+  <div class="books-section">
+    <!-- Botón de desplazamiento a la izquierda -->
+    <button class="scroll-btn left" id="btn-left-recomendaciones">&#8249;</button>
+
+    <!-- Contenedor para mostrar los libros -->
+    <div id="recomendaciones-container" class="books-container"></div>
+
+    <!-- Botón de desplazamiento a la derecha -->
+    <button class="scroll-btn right" id="btn-right-recomendaciones">&#8250;</button>
+  </div>
+
+  <!-- Cargar Google Books API -->
+  <script type="module">
+    async function cargarNovedades() {
+    const url = 'https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=AIzaSyAPkUEVaKIyM-AzsMMbU-tfU6VuKQvhNM4&maxResults=10';
+    const response = await fetch(url);
+    const data = await response.json();
+    const libros = data.items;
+
+    const container = document.getElementById("novedades-container");
+    container.innerHTML = ""; // Limpiar contenedor
+
+    libros.forEach(libro => {
+        const libroDiv = document.createElement("div");
+        libroDiv.classList.add("libro");
+
+        // Extraer información del libro
+        const titulo = libro.volumeInfo.title;
+        const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
+        const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
+        const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+        const infoLink = libro.volumeInfo.infoLink; // Obtener el enlace para más información
+
+        libroDiv.innerHTML = `
+          <a href="${infoLink}" target="_blank"> <!-- Enlace al libro -->
+            <img src="${portada}" alt="Portada del libro">
+            <h3>${titulo}</h3>
+            <p>${descripcion}</p>
+            <p><strong>Autor:</strong> ${autor}</p>
+            <p><strong>Ver más información</strong></p>
+          </a>
+        `;
+
+        container.appendChild(libroDiv);
+    });
+}
+
+async function cargarRecomendaciones() {
+    const url = 'https://www.googleapis.com/books/v1/volumes?q=recommendations&langRestrict=es&key=AIzaSyAPkUEVaKIyM-AzsMMbU-tfU6VuKQvhNM4&maxResults=10';
+    const response = await fetch(url);
+    const data = await response.json();
+    const libros = data.items;
+
+    const container = document.getElementById("recomendaciones-container");
+    container.innerHTML = ""; // Limpiar contenedor
+
+    libros.forEach(libro => {
+        const libroDiv = document.createElement("div");
+        libroDiv.classList.add("libro");
+
+        // Extraer información del libro
+        const titulo = libro.volumeInfo.title;
+        const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
+        const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
+        const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+        const infoLink = libro.volumeInfo.infoLink; // Obtener el enlace para más información
+
+        libroDiv.innerHTML = `
+          <a href="${infoLink}" target="_blank"> <!-- Enlace al libro -->
+            <img src="${portada}" alt="Portada del libro">
+            <h3>${titulo}</h3>
+            <p>${descripcion}</p>
+            <p><strong>Autor:</strong> ${autor}</p>
+            <p><strong>Ver más información</strong></p>
+          </a>
+        `;
+
+        container.appendChild(libroDiv);
+    });
+}
+
+
+    // Cargar libros al iniciar la página
+    cargarNovedades();
+    cargarRecomendaciones();
+
+    // Desplazamiento lateral
+    const containers = [
+      { container: document.getElementById('novedades-container'), leftBtn: document.getElementById('btn-left'), rightBtn: document.getElementById('btn-right') },
+      { container: document.getElementById('recomendaciones-container'), leftBtn: document.getElementById('btn-left-recomendaciones'), rightBtn: document.getElementById('btn-right-recomendaciones') }
+    ];
+
+    containers.forEach(({ container, leftBtn, rightBtn }) => {
+      leftBtn.addEventListener('click', () => {
+        container.scrollBy({
+          top: 0,
+          left: -300,
+          behavior: 'smooth'
+        });
+      });
+
+      rightBtn.addEventListener('click', () => {
+        container.scrollBy({
+          top: 0,
+          left: 300,
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

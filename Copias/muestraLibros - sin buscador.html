@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .libro {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px;
+      background-color: #f9f9f9; /* Color de fondo para visualizar mejor */
+    }
+    .libro h3 { margin: 0; }
+    a { color: blue; text-decoration: underline; cursor: pointer; }
+    
+    /* Estilo para el botón de volver al inicio */
+    .back-to-top {
+      display: none; /* Ocultar inicialmente */
+      position: fixed; /* Fijo en la pantalla */
+      bottom: 20px; /* Espacio desde el fondo */
+      right: 20px; /* Espacio desde la derecha */
+      padding: 10px 15px; /* Espaciado interno */
+      background-color: #007BFF; /* Color de fondo */
+      color: white; /* Color de texto */
+      border: none; /* Sin borde */
+      border-radius: 5px; /* Bordes redondeados */
+      cursor: pointer; /* Cursor tipo puntero */
+      font-size: 16px; /* Tamaño de texto */
+    }
+    .back-to-top:hover {
+      background-color: #0056b3; /* Color de fondo al pasar el ratón */
+    }
+
+    /* Estilo para los botones de agregar libro y cerrar sesión */
+    .button-container {
+      margin-bottom: 20px; /* Espacio debajo de los botones */
+      display: flex; /* Usar flexbox para alinear horizontalmente */
+      gap: 10px; /* Espacio entre los botones */
+    }
+    .button-container button {
+      padding: 8px 12px; /* Espaciado interno reducido */
+      background-color: #007BFF; /* Color de fondo */
+      color: white; /* Color de texto */
+      border: none; /* Sin borde */
+      border-radius: 5px; /* Bordes redondeados */
+      cursor: pointer; /* Cursor tipo puntero */
+      font-size: 14px; /* Tamaño de texto más pequeño */
+      transition: background-color 0.3s; /* Transición suave para el hover */
+    }
+    .button-container button:hover {
+      background-color: #0056b3; /* Color de fondo al pasar el ratón */
+    }
+  </style>
+</head>
+<body>
+  <h1>BookAffinity</h1>
+
+  <!-- Contenedor para los botones -->
+  <div class="button-container">
+    <!-- Botón para Agregar Libro -->
+    <button id="add-book-button">Agregar Libro</button>
+    
+    <!-- Botón para cerrar sesión -->
+    <button id="logout-button" style="display:none;">Cerrar Sesión</button>
+  </div>
+
+  <!-- Contenedor para mostrar los libros -->
+  <h2>Listado de libros</h2>
+  <div id="libros-container" style="display:none;"></div> <!-- Ocultar inicialmente -->
+
+  <!-- Botón para volver al inicio -->
+  <button class="back-to-top" id="back-to-top">Volver arriba</button>
+  
+  <!-- Cargar Firebase como un módulo -->
+  <script type="module">
+    // Importar las bibliotecas de Firebase desde el CDN usando ESModules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Configuración de Firebase para conectar con tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    console.log("Firebase inicializado");
+
+    // Verificar el estado de autenticación
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+        document.getElementById('logout-button').style.display = 'block'; // Mostrar el botón de cerrar sesión
+        mostrarlibrosEnHTML(); // Cargar libros al iniciar sesión
+        document.getElementById('libros-container').style.display = 'block'; // Mostrar el contenedor de libros
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+    // Función para obtener y mostrar la lista de libros
+    async function mostrarlibrosEnHTML() {
+      console.log("Cargando libros...");
+      const container = document.getElementById("libros-container");
+      container.innerHTML = "";  // Limpia el contenedor antes de agregar los datos
+
+      // Obtiene la colección de libros de Firestore
+      const querySnapshot = await getDocs(collection(db, "Libros"));
+      console.log(`Documentos encontrados: ${querySnapshot.docs.length}`); // Log de cantidad de documentos
+
+      for (const doc of querySnapshot.docs) {
+        const libro = doc.data();
+        const libroDiv = document.createElement("div");
+        libroDiv.className = "libro";
+        
+        // Calcular y mostrar la puntuación media
+        const puntuacionMedia = await calcularPuntuacionMedia(doc.id); // Cambia aquí a doc.id
+        libroDiv.innerHTML = `
+          <h3>${libro.Titulo} (${libro.Fecha})</h3>
+          <p>Autor: ${libro.Autor}</p>
+          <p>Género: ${libro.Genero}</p>
+          <p>Sinopsis: ${libro.Sinopsis}</p>
+          <a href="MuestraReseñas.html?titulo=${encodeURIComponent(libro.Titulo)}">Ver Reseñas</a>
+          <p>Puntuación Media: ${puntuacionMedia !== null ? puntuacionMedia.toFixed(2) : 'No disponible'}</p> <!-- Formato decimal -->
+        `;
+        container.appendChild(libroDiv);
+      }
+    }
+
+    // Función para calcular la puntuación media
+    async function calcularPuntuacionMedia(libroId) {
+      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", libroId)); // Cambiado a libro_id
+      const reseñasSnapshot = await getDocs(reseñasQuery);
+      
+      let totalPuntuacion = 0;
+      let cantidadResenas = 0;
+
+      // Sumar las puntuaciones de las reseñas
+      reseñasSnapshot.forEach(reseñaDoc => {
+        const puntuacion = reseñaDoc.data().puntuacion; // Asegúrate de que este campo existe
+        if (typeof puntuacion === 'number') {
+          totalPuntuacion += puntuacion; // Asegúrate de que sea un número
+          cantidadResenas++;
+        } else {
+          console.error(`La puntuación no es un número para la reseña ${reseñaDoc.id}:`, puntuacion);
+        }
+      });
+
+      // Calcular y retornar la puntuación media
+      return cantidadResenas > 0 ? totalPuntuacion / cantidadResenas : null; // Retornar null si no hay reseñas
+    }
+
+    // Evento para redirigir al agregar un nuevo libro
+    document.getElementById("add-book-button").addEventListener("click", () => {
+      window.location.href = "agregaLibros.html"; // Redirigir a la página de agregar libro
+    });
+
+    // Evento para cerrar sesión
+    document.getElementById("logout-button").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        console.log("Usuario desconectado.");
+        window.location.href = "Prueba.html"; // Redirigir a la página de inicio de sesión
+      }).catch((error) => {
+        console.error("Error al cerrar sesión:", error);
+      });
+    });
+
+    // Mostrar y ocultar el botón de volver al inicio
+    const backToTopButton = document.getElementById("back-to-top");
+    window.onscroll = function() {
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        backToTopButton.style.display = "block";
+      } else {
+        backToTopButton.style.display = "none";
+      }
+    };
+
+    // Evento para volver al inicio
+    backToTopButton.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+  </script>
+</body>
+</html>

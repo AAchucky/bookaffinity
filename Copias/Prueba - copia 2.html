@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      background-color: #f4f4f4; /* Color de fondo para toda la página */
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .libro {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin: 15px 0; /* Espaciado vertical entre libros */
+      background-color: #fff; /* Color de fondo para los libros */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para darle un efecto de profundidad */
+      border-radius: 5px; /* Bordes redondeados */
+    }
+    .libro h3 { 
+      margin: 0; 
+      color: #2c3e50; /* Color del título */
+    }
+    h2 {
+      margin-top: 20px; /* Espacio encima de los encabezados */
+      color: #2c3e50;
+    }
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    input[type="number"], 
+    textarea, 
+    select {
+      width: 95%; /* Ajustar el ancho de los campos */
+      padding: 6px; /* Espaciado interno reducido */
+      margin: 6px 0; /* Espaciado vertical entre campos */
+      border: 1px solid #ddd;
+      border-radius: 4px; /* Bordes redondeados */
+      box-sizing: border-box; /* Asegura que el padding se incluya en el ancho total */
+      font-size: 14px; /* Tamaño de fuente reducido */
+    }
+    button {
+      background-color: #3498db; /* Color de fondo del botón */
+      color: white; /* Color del texto */
+      padding: 8px 12px; /* Espaciado interno del botón */
+      border: none; /* Sin borde */
+      border-radius: 4px; /* Bordes redondeados */
+      cursor: pointer; /* Cursor de mano al pasar el ratón */
+      width: 100%; /* Botón ocupa todo el ancho */
+      font-size: 14px; /* Tamaño de fuente reducido */
+      transition: background-color 0.3s; /* Transición para el hover */
+    }
+    button:hover {
+      background-color: #2980b9; /* Color de fondo al pasar el ratón */
+    }
+    .form-container {
+      margin: 20px auto; /* Margen alrededor de los formularios */
+      padding: 15px; /* Padding reducido */
+      border: 1px solid #ddd;
+      background-color: #fff; /* Color de fondo para los formularios */
+      border-radius: 5px; /* Bordes redondeados */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para darle un efecto de profundidad */
+      max-width: 400px; /* Ancho máximo para los formularios */
+    }
+    .form-link {
+      display: inline-block; /* Asegura que el enlace sea un bloque en línea */
+      margin: 10px 0; /* Espaciado vertical entre enlaces */
+      color: #3498db; /* Color del enlace */
+      text-decoration: none; /* Sin subrayado */
+      font-size: 16px; /* Tamaño de fuente de los enlaces */
+    }
+    .form-link:hover {
+      text-decoration: underline; /* Subrayar al pasar el ratón */
+    }
+  </style>
+</head>
+<body>
+
+<h1>Bienvenido a BookAffinity</h1>
+
+<!-- Formulario de inicio de sesión -->
+<h2 align="center">Formulario de Inicio de Sesión</h2>
+<div class="form-container">
+  <form id="login-form">
+    <label for="login-email">Email:</label>
+    <input type="email" id="login-email" placeholder="Correo electrónico" required>
+
+    <label for="login-password">Contraseña:</label>
+    <input type="password" id="login-password" placeholder="Contraseña" required>
+
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+</div>
+
+<!-- Formulario de registro -->
+<h2 align="center">Formulario de Registro de Usuario</h2>
+<div class="form-container">
+  <form id="register-form">
+    <label for="register-nombre">Nombre:</label>
+    <input type="text" id="register-nombre" name="nombre" required>
+    
+    <label for="register-email">Email:</label>
+    <input type="email" id="register-email" name="email" required>
+
+    <label for="register-password">Contraseña:</label>
+    <input type="password" id="register-password" name="password" required>
+    
+    <button type="submit">Registrarse</button>
+  </form>
+</div>
+
+<script type="module">
+    // Importar las bibliotecas de Firebase desde el CDN usando ESModules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Configuración de Firebase para conectar con tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    console.log("Firebase inicializado");
+
+    // Verificar el estado de autenticación
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+    // Función para iniciar sesión de un usuario
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault(); // Evitar que el formulario se envíe por defecto
+      console.log("Intentando iniciar sesión...");
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Usuario inició sesión:", userCredential.user);
+        alert(`¡Bienvenido, ${userCredential.user.email}!`);
+        
+        // Aquí puedes redirigir al usuario a otra página o mostrar contenido
+        // Por ejemplo: window.location.href = 'pagina-principal.html';
+         // Redireccionar al archivo 2
+        window.location.href = "agregaLibros.html"; // Cambia 'archivo2.html' al nombre de tu segundo archivo
+        
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error.message);
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    });
+
+    // Función para registrar un usuario
+    document.getElementById("register-form").addEventListener("submit", async (event) => {
+      event.preventDefault(); // Evitar que el formulario se envíe por defecto
+      const nombre = document.getElementById("register-nombre").value;
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+
+      try {
+        // Registrar al usuario en la autenticación de Firebase
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        console.log("Usuario registrado:", user);
+
+        // Guardar la información adicional del usuario en Firestore
+        await setDoc(doc(db, "Usuarios", user.uid), {
+          nombre: nombre,
+          email: email,
+          // No guardes la contraseña en Firestore
+          fecha: new Date().toISOString() // Almacenar la fecha de registro
+        });
+
+        alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+      } catch (error) {
+        console.error("Error al registrar usuario:", error.message);
+        alert("Error al registrar usuario: " + error.message);
+      }
+    });
+</script>
+
+</body>
+</html>
