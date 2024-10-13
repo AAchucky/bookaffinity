@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Añadir Reseña</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      font-size: 14px; /* Tamaño de fuente más pequeño */
+    }
+    #review-form {
+      margin: 20px auto;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      width: 300px; /* Ancho más pequeño */
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+      font-size: 18px; /* Tamaño de fuente más pequeño */
+    }
+    label {
+      display: block;
+      margin-bottom: 3px; /* Espaciado más pequeño */
+      font-weight: normal; /* Sin negrita */
+    }
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 5px; /* Relleno más pequeño */
+      margin-bottom: 10px; /* Espaciado más pequeño */
+      border: 1px solid #ddd;
+      border-radius: 3px; /* Esquinas más suaves */
+      box-sizing: border-box;
+      font-size: 14px; /* Tamaño de fuente más pequeño */
+    }
+    button {
+      border: 1px solid #333; /* Sin color de fondo */
+      background-color: transparent; /* Sin color de fondo */
+      color: #333; /* Color de texto gris oscuro */
+      border-radius: 3px; /* Esquinas más suaves */
+      padding: 5px; /* Relleno más pequeño */
+      cursor: pointer;
+      width: 48%;
+      margin: 1%;
+      font-size: 12px; /* Tamaño de fuente más pequeño */
+    }
+    button:hover {
+      opacity: 0.8; /* Efecto al pasar el ratón */
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+    }
+    #logout-button {
+      display: block; /* Centrar el botón de cerrar sesión */
+      margin: 10px auto; /* Margen superior y centrado */
+      width: 100px; /* Ancho más pequeño */
+      font-size: 12px; /* Tamaño de fuente más pequeño */
+      padding: 5px; /* Relleno más pequeño */
+    }
+  </style>
+</head>
+<body>
+  <h1>Agregar Reseña</h1>
+
+  <div id="review-form">
+    <h2 id="titulo-resena">Añadir Reseña al Libro</h2>
+    <label for="review-rating">Puntuación (1-10):</label>
+    <input type="number" id="review-rating" min="1" max="10" required>
+
+    <label for="review-text">Reseña:</label>
+    <textarea id="review-text" rows="4" required></textarea>
+
+    <div class="button-container">
+      <button id="submit-review">Enviar Reseña</button>
+      <button id="cancel-button" class="cancel">Cancelar</button>
+    </div>
+  </div>
+
+  <button id="logout-button" class="logout">Cerrar Sesión</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        tituloLibro: params.get('titulo'), // Obtener el título del libro
+      };
+    }
+
+    // Al cargar la página
+    window.onload = function() {
+      const { tituloLibro } = getQueryParams();
+      if (tituloLibro) {
+        document.getElementById("titulo-resena").textContent += ` "${tituloLibro}"`; // Actualizar título
+      } else {
+        console.error("No se proporcionó un título de libro.");
+      }
+    };
+
+    // Enviar reseña
+    document.getElementById("submit-review").addEventListener("click", async () => {
+      const { tituloLibro } = getQueryParams();
+      const puntuacion = document.getElementById("review-rating").value;
+      const texto = document.getElementById("review-text").value;
+
+      if (tituloLibro) {
+        try {
+          await addDoc(collection(db, "Resenas"), {
+            libro_id: tituloLibro, // Guarda el título del libro como referencia
+            puntuacion: Number(puntuacion),
+            texto: texto,
+            usuario_id: auth.currentUser.uid // ID del usuario que agrega la reseña
+          });
+          // Redirigir a la página de reseñas del libro
+          window.location.href = `muestraReseñas.html?titulo=${encodeURIComponent(tituloLibro)}`;
+        } catch (error) {
+          console.error("Error al agregar la reseña:", error);
+        }
+      } else {
+        alert("No se ha proporcionado un título de libro.");
+      }
+    });
+
+    // Cancelar la acción
+    document.getElementById("cancel-button").addEventListener("click", () => {
+      const { tituloLibro } = getQueryParams();
+      if (tituloLibro) {
+        // Redirigir a la página de reseñas del libro
+        window.location.href = `muestraReseñas.html?titulo=${encodeURIComponent(tituloLibro)}`;
+      }
+    });
+
+    // Cerrar sesión
+    document.getElementById("logout-button").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        alert("Has cerrado sesión.");
+        window.location.href = "Prueba.html"; // Redirigir a la página de inicio
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .libro {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+    background-color: #f9f9f9; /* Color de fondo para visualizar mejor */
+		}
+    .libro h3 { margin: 0; }
+  </style>
+</head>
+<body>
+  <h1>BookAffinity</h1>
+
+  <!-- Formulario de inicio de sesión -->
+  <div id="login-form">
+    <h2>Iniciar Sesión</h2>
+    <input type="email" id="login-email" placeholder="Correo electrónico" required>
+    <input type="password" id="login-password" placeholder="Contraseña" required>
+    <button id="login-button">Iniciar Sesión</button>
+  </div>
+
+  <!-- Formulario de registro -->
+  <div id="register-form">
+    <h2>Registrar Usuario</h2>
+    <input type="nombre" id="register-nombre" placeholder="Nombre de usuario" required> 
+    <input type="email" id="register-email" placeholder="Correo electrónico" required>
+    <input type="password" id="register-password" placeholder="Contraseña" required>
+    <button id="register-button">Registrar</button>
+  </div>
+  
+	<!-- Formulario para agregar un nuevo libro -->
+	<div id="book-form" style="margin: 20px; padding: 20px; border: 1px solid #ddd; background-color: #f0f0f0; width: 400px;">
+	  <h2>Registrar un Nuevo Libro</h2>
+	
+	  <!-- Rótulo y Campo para Título -->
+	  <label for="book-title">Título del Libro:</label><br>
+	  <input type="text" id="book-title" placeholder="Introduce el título del libro" required><br><br>
+	
+	  <!-- Rótulo y Campo para Autor -->
+	  <label for="book-author">Autor:</label><br>
+	  <input type="text" id="book-author" placeholder="Introduce el nombre del autor" required><br><br>
+	
+	  <!-- Rótulo y Campo para Género -->
+	  <label for="book-genre">Género:</label><br>
+	  <input type="text" id="book-genre" placeholder="Introduce el género literario" required><br><br>
+	
+	  <!-- Rótulo y Campo para Año de Publicación -->
+	  <label for="book-year">Año de Publicación:</label><br>
+	  <input type="number" id="book-year" placeholder="Introduce solo el año (e.g., 2023)" min="1500" max="2100" required><br><br>
+	
+	  <!-- Rótulo y Campo para Sinopsis -->
+	  <label for="book-synopsis">Sinopsis:</label><br>
+	  <textarea id="book-synopsis" placeholder="Escribe la sinopsis del libro" rows="4" cols="50" required></textarea><br><br>
+	
+	  <!-- Botón para Agregar Libro -->
+	  <button id="add-book-button">Agregar Libro</button>
+	</div>
+	
+	<!-- Formulario para agregar una nueva reseña -->
+	<div id="review-form" style="margin: 20px; padding: 20px; border: 1px solid #ddd; background-color: #f0f0f0; width: 400px;">
+	  <h2>Añadir Reseña a un Libro</h2>
+	
+	  <!-- Campo para Selección de Libro -->
+	  <label for="review-book">Selecciona un libro:</label><br>
+	  <select id="review-book" required>
+	    <option value="" disabled selected>Elige un libro</option>
+	  </select><br><br>
+	
+	  <!-- Campo para Puntuación -->
+	  <label for="review-rating">Puntuación (1-5):</label><br>
+	  <input type="number" id="review-rating" placeholder="Introduce la puntuación" min="1" max="5" required><br><br>
+	
+	  <!-- Campo para la Reseña -->
+	  <label for="review-text">Reseña:</label><br>
+	  <textarea id="review-text" placeholder="Escribe tu reseña aquí" rows="4" cols="50" required></textarea><br><br>
+	
+	  <!-- Botón para Agregar Reseña -->
+	  <button id="add-review-button">Añadir Reseña</button>
+	</div>
+	
+	
+  <!-- Contenedor para mostrar las libros -->
+  <h2>Listado de libros</h2>
+  <div id="libros-container" style="display:none;"></div> <!-- Ocultar inicialmente -->
+  
+  <!-- Botón para cerrar sesión -->
+  <button id="logout-button" style="display:none;">Cerrar Sesión</button>
+  
+  <!-- Cargar Firebase como un módulo -->
+  <script type="module">
+    // Importar las bibliotecas de Firebase desde el CDN usando ESModules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+		import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { Timestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Configuración de Firebase para conectar con tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    console.log("Firebase inicializado");
+
+    // Verificar el estado de autenticación
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+		// Función para iniciar sesión de un usuario
+		async function iniciarSesion() {
+		    console.log("Intentando iniciar sesión...");
+		    const email = document.getElementById("login-email").value;
+		    const password = document.getElementById("login-password").value;
+		    try {
+		        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+		        console.log("Usuario inició sesión:", userCredential.user);
+		        alert(`¡Bienvenido, ${userCredential.user.email}!`);
+		
+		        // Ocultar el formulario de inicio de sesión
+		        document.getElementById('login-form').style.display = 'none';
+		        
+            // Ocultar el formulario de inicio de sesión
+		        document.getElementById('register-form').style.display = 'none';
+		        		
+		        // Mostrar botón de cerrar sesión
+		        document.getElementById('logout-button').style.display = 'block';
+		
+		        // Llama a la función para mostrar los libros
+		        mostrarlibrosEnHTML(); // Llamar aquí también para mostrar los libros
+		        document.getElementById('libros-container').style.display = 'block';
+		    } catch (error) {
+		        console.error("Error al iniciar sesión:", error.message);
+		        alert("Error al iniciar sesión: " + error.message);
+		    }
+		}
+		
+
+    // Asignar el evento al botón para iniciar sesión
+    document.getElementById("login-button").addEventListener("click", iniciarSesion);
+
+		// Funcion para registrar un usuario
+		async function registrarUsuario() {
+		  const nombre = document.getElementById("register-nombre").value;
+		  const email = document.getElementById("register-email").value;
+		  const password = document.getElementById("register-password").value;
+		  
+		  try {
+		    // Registrar al usuario en la autenticación de Firebase
+		    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+		    const user = userCredential.user;
+		
+		    console.log("Usuario registrado:", user);
+		
+		    // Guardar la información adicional del usuario en Firestore
+		    await setDoc(doc(db, "Usuarios", user.uid), {
+		      nombre: nombre,
+		      email: email,
+		      Password: password
+		      //fecha: new Date().toISOString() // Almacenar la fecha de registro
+		    });
+		
+		    alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+		  } catch (error) {
+		    console.error("Error al registrar usuario:", error.message);
+		    alert("Error al registrar usuario: " + error.message);
+		  }
+		}
+		
+		
+
+    // Asignar el evento al botón para registrar
+    document.getElementById("register-button").addEventListener("click", registrarUsuario);
+
+    // Función para obtener y mostrar la lista de libros
+		async function mostrarlibrosEnHTML() {
+		    console.log("Cargando libros...");
+		    const container = document.getElementById("libros-container");
+		    container.innerHTML = "";  // Limpia el contenedor antes de agregar los datos
+		
+		    // Obtiene la colección de libros de Firestore
+		    const querySnapshot = await getDocs(collection(db, "Libros"));
+		    console.log(`Documentos encontrados: ${querySnapshot.docs.length}`); // Log de cantidad de documentos
+		
+		    for (const doc of querySnapshot.docs) {
+		        const libro = doc.data();
+		        const libroDiv = document.createElement("div");
+		        libroDiv.className = "libro";
+		        libroDiv.innerHTML = `
+		            <h3>${libro.Titulo} (${libro.Fecha})</h3>
+		            <p>Autor: ${libro.Autor}</p>
+		            <p>Género: ${libro.Genero}</p>
+		            <p>Sinopsis: ${libro.Sinopsis}</p>
+		            <h4>Resenas:</h4>
+		            <div class="Resenas" id="Resenas-${doc.id}"></div>
+		        `;
+		        container.appendChild(libroDiv);
+		
+		        // Cargar Resenas del libro usando el ID del libro
+		        console.log("ID del libro:", doc.id);
+						await mostrarResenasPorLibro(doc.id);
+						console.log("Resenas mostradas para el libro con ID:", doc.id);
+
+		    }
+		}
+
+		//Función para Mostrar las Resenas de Cada Libro
+		async function mostrarResenasPorLibro(libroId) {
+		    const ResenasContainer = document.getElementById(`Resenas-${libroId}`);
+		
+		    // Consulta a la colección `Resenas` filtrando por el campo `libro_id`
+		    const ResenasQuery = collection(db, "Resenas");
+		    const querySnapshot = await getDocs(ResenasQuery);
+		
+		    // Filtra las Resenas que coinciden con el `libro_id`
+		    const ResenasFiltradas = querySnapshot.docs.filter(doc => doc.data().libro_id === libroId);
+		
+		    if (ResenasFiltradas.length === 0) {
+		        ResenasContainer.innerHTML = "<p>No hay Resenas para este libro.</p>";
+		        return;
+		    }
+
+		
+		    ResenasFiltradas.forEach((doc) => {
+		        const resena = doc.data();
+		        const resenaDiv = document.createElement("div");
+		        const fechaPublicacion = resena.fecha instanceof Timestamp ? 
+                                 resena.fecha.toDate().toLocaleDateString() : 
+                                 "Fecha no disponible";
+		        resenaDiv.innerHTML = `
+		            <p><strong>Usuario:</strong>  ${resena.usuario_id}</p>
+		            <p>Puntuacion: ${resena.puntuacion}</p>
+		            <p>Reseña: ${resena.texto}</p>
+		            <small>Fecha: ${fechaPublicacion}</small>
+		        `;
+		        ResenasContainer.appendChild(resenaDiv);
+		    });
+		}
+		
+		// Función para registrar un nuevo libro en la colección `Libros`
+		async function registrarLibro() {
+		  // Capturar los valores del formulario con los nuevos IDs
+		  const titulo = document.getElementById("book-title").value.trim();
+		  const autor = document.getElementById("book-author").value.trim();
+		  const genero = document.getElementById("book-genre").value.trim();
+		  const year = document.getElementById("book-year").value.trim(); // Cambiado a `book-year`
+		  const sinopsis = document.getElementById("book-synopsis").value.trim();
+		
+		  // Validación de campos (opcional)
+		  if (!titulo || !autor || !genero || !year || !sinopsis) {
+		    alert("Por favor, completa todos los campos antes de agregar el libro.");
+		    return;
+		  }
+		
+		  try {
+		    // Verifica que el usuario esté autenticado antes de permitir la operación
+		    const usuarioActual = auth.currentUser;
+		    if (!usuarioActual) {
+		      alert("Debes iniciar sesión para agregar un libro.");
+		      return;
+		    }
+		
+		    // Agregar el libro a la colección `Libros` en Firestore
+		    await setDoc(doc(collection(db, "Libros")), {
+		      Titulo: titulo,
+		      Autor: autor,
+		      Genero: genero,
+		      Fecha: year, // Almacenar solo el año
+		      Sinopsis: sinopsis,
+		      usuario_id: usuarioActual.uid // Guardar el ID del usuario que agrega el libro
+		    });
+		
+		    // Confirmación de éxito
+		    alert("¡Libro registrado exitosamente!");
+		
+		    // Limpia el formulario después de agregar el libro
+		    document.getElementById("book-title").value = "";
+		    document.getElementById("book-author").value = "";
+		    document.getElementById("book-genre").value = "";
+		    document.getElementById("book-year").value = ""; // Limpia el campo de año
+		    document.getElementById("book-synopsis").value = "";
+		
+		    // Actualiza la lista de libros en la interfaz
+		    mostrarlibrosEnHTML();
+		
+		  } catch (error) {
+		    console.error("Error al registrar el libro:", error.message);
+		    alert("Error al registrar el libro: " + error.message);
+		  }
+		}
+		
+		// Asigna la función al botón de agregar libro
+		document.getElementById("add-book-button").addEventListener("click", registrarLibro);
+
+			
+		// Función para cargar los libros en el desplegable de selección de reseñas
+		async function cargarLibrosEnSelect() {
+		  const selectLibro = document.getElementById("review-book");
+		  selectLibro.innerHTML = "<option value='' disabled selected>Elige un libro</option>"; // Reiniciar opciones
+		
+		  try {
+		    // Obtener la lista de libros de la colección "Libros"
+		    const querySnapshot = await getDocs(collection(db, "Libros"));
+		
+		    // Rellenar el select con los títulos de los libros y sus IDs como valores
+		    querySnapshot.forEach((doc) => {
+		      const libro = doc.data();
+		      const option = document.createElement("option");
+		      option.value = doc.id; // El valor del option es el ID del libro en la colección
+		      option.textContent = libro.Titulo; // El texto que se muestra es el título del libro
+		      selectLibro.appendChild(option);
+		    });
+		
+		    console.log("Libros cargados en el formulario de reseñas.");
+		  } catch (error) {
+		    console.error("Error al cargar libros en el select:", error);
+		    alert("Error al cargar los libros en el formulario de reseñas.");
+		  }
+		}
+		
+		// Llamar a la función al cargar la página para llenar el select de libros
+		cargarLibrosEnSelect();
+		
+		// Función para registrar una nueva reseña en la colección `Reseñas`
+		async function registrarResena() {
+		  // Capturar los valores del formulario
+		  const libroId = document.getElementById("review-book").value; // Obtener el ID del libro seleccionado
+		  const puntuacion = parseInt(document.getElementById("review-rating").value.trim());
+		  const textoResena = document.getElementById("review-text").value.trim();
+		
+		  // Validación de campos
+		  if (!libroId || !puntuacion || !textoResena) {
+		    alert("Por favor, completa todos los campos antes de agregar la reseña.");
+		    return;
+		  }
+		
+		  try {
+		    // Verificar que el usuario esté autenticado antes de permitir la operación
+		    const usuarioActual = auth.currentUser;
+		    if (!usuarioActual) {
+		      alert("Debes iniciar sesión para agregar una reseña.");
+		      return;
+		    }
+		
+		    // Obtener la fecha actual para registrar la reseña
+		    const fechaPublicacion = new Date();
+		
+		    // Crear la reseña con los campos especificados
+		    const nuevaResena = {
+		      libro_id: libroId,
+		      puntuacion: puntuacion,
+		      texto: textoResena,
+		      usuario_id: usuarioActual.uid, // Asociar la reseña al usuario actual
+		      fecha: fechaPublicacion.toISOString() // Guardar la fecha en formato ISO
+		    };
+		
+		    // Agregar la reseña a la colección "Reseñas"
+		    const docRef = doc(collection(db, "Resenas")); // Generar un nuevo documento vacío en la colección
+		    await setDoc(docRef, nuevaResena); // Guardar la reseña en el documento
+		    alert("¡Reseña añadida exitosamente!");
+		
+		    // Limpiar el formulario después de agregar la reseña
+		    document.getElementById("review-book").value = "";
+		    document.getElementById("review-rating").value = "";
+		    document.getElementById("review-text").value = "";
+		  } catch (error) {
+		    console.error("Error al agregar la reseña:", error.message);
+		    alert("Error al agregar la reseña: " + error.message);
+		  }
+		}
+		
+		// Asignar el evento al botón para agregar reseñas
+		document.getElementById("add-review-button").addEventListener("click", registrarResena);					
+
+    // Función para cerrar sesión
+    async function cerrarSesion() {
+      try {
+        await signOut(auth);
+        alert("¡Has cerrado sesión!");
+        
+        // Volver a mostrar el formulario de inicio de sesión
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('logout-button').style.display = 'none';
+        document.getElementById("libros-container").style.display = "none"; // Ocultar contenedor de libros
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error.message);
+        alert("Error al cerrar sesión: " + error.message);
+      }
+    }
+
+    // Asignar el evento al botón para cerrar sesión
+    document.getElementById("logout-button").addEventListener("click", cerrarSesion);
+
+  </script>
+</body>
+</html>

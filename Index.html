@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      background-image: url('Imagenes/libro.jpg'); /* Cambiar a la ruta correcta de tu imagen local */
+      background-size: cover; 
+      background-position: center; 
+      background-attachment: fixed; 
+      background-color: #f4f4f4; 
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .libro {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin: 15px 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    h2 {
+      margin-top: 20px;
+      color: #2c3e50;
+    }
+
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    input[type="number"], 
+    textarea, 
+    select {
+      width: 95%;
+      padding: 6px;
+      margin: 6px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .form-container {
+      margin: 20px auto;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+    }
+
+    .form-link {
+      display: inline-block;
+      margin: 10px 0;
+      color: #3498db;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .form-link:hover {
+      text-decoration: underline;
+    }
+
+    .guest-button {
+      margin-top: 15px; /* Espaciado adicional para el botón de invitado */
+      background-color: #e67e22; /* Color distinto para el botón de invitado */
+    }
+
+    .guest-button:hover {
+      background-color: #d35400; /* Color más oscuro al pasar el ratón */
+    }
+  </style>
+</head>
+<body>
+
+<h1>Bienvenido a BookAffinity</h1>
+
+<!-- Formulario de inicio de sesión -->
+<h2 align="center">Formulario de Inicio de Sesión</h2>
+<div class="form-container">
+  <form id="login-form">
+    <label for="login-nombre">Nombre:</label>
+    <input type="text" id="login-nombre" placeholder="Nombre de usuario" required>
+
+    <label for="login-password">Contraseña:</label>
+    <input type="password" id="login-password" placeholder="Contraseña" required>
+
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+  <button class="guest-button" id="guest-login">Iniciar Sesión como Invitado</button> <!-- Botón de invitado -->
+</div>
+
+<!-- Formulario de registro -->
+<h2 align="center">Formulario de Registro de Usuario</h2>
+<div class="form-container">
+  <form id="register-form">
+    <label for="register-nombre">Nombre:</label>
+    <input type="text" id="register-nombre" name="nombre" required>
+    
+    <label for="register-email">Email:</label>
+    <input type="email" id="register-email" name="email" required>
+
+    <label for="register-password">Contraseña:</label>
+    <input type="password" id="register-password" name="password" required>
+    
+    <button type="submit">Registrarse</button>
+  </form>
+</div>
+
+<script type="module">
+    // Importar las bibliotecas de Firebase desde el CDN usando ESModules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, collection, setDoc, doc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    // Configuración de Firebase para conectar con tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    console.log("Firebase inicializado");
+
+    // Verificar el estado de autenticación
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Usuario autenticado:", user);
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+    // Función para iniciar sesión de un usuario por nombre
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault(); // Evitar que el formulario se envíe por defecto
+      console.log("Intentando iniciar sesión...");
+      const nombre = document.getElementById("login-nombre").value; // Obtener el nombre
+      const password = document.getElementById("login-password").value; // Obtener la contraseña
+
+      try {
+        // Buscar el usuario por nombre en Firestore
+        const userQuery = await getDocs(query(collection(db, "Usuarios"), where("nombre", "==", nombre)));
+        if (userQuery.empty) {
+          alert("No se encontró un usuario con ese nombre.");
+          return;
+        }
+
+        const userDoc = userQuery.docs[0]; // Obtener el primer usuario encontrado
+        const email = userDoc.data().email; // Obtener el email del usuario
+
+        // Ahora intenta iniciar sesión con el email y la contraseña
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("Usuario inició sesión:", userCredential.user);
+        alert(`¡Bienvenido, ${userDoc.data().nombre}!`);
+        
+        // Redirigir al usuario a otra página o mostrar contenido
+        window.location.href = "muestraLibros.html"; // Cambia esto según sea necesario
+        
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error.message);
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    });
+
+    // Función para registrar un usuario
+    document.getElementById("register-form").addEventListener("submit", async (event) => {
+      event.preventDefault(); // Evitar que el formulario se envíe por defecto
+      const nombre = document.getElementById("register-nombre").value;
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+
+      try {
+        // Registrar al usuario en la autenticación de Firebase
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        console.log("Usuario registrado:", user);
+
+        // Guardar la información adicional del usuario en Firestore
+        await setDoc(doc(db, "Usuarios", user.uid), {
+          nombre: nombre,
+          email: email
+        });
+
+        alert("Registro exitoso. ¡Bienvenido!");
+        
+        // Redirigir al usuario a otra página o mostrar contenido
+        window.location.href = "muestraLibros.html"; // Cambia esto según sea necesario
+
+      } catch (error) {
+        console.error("Error al registrarse:", error.message);
+        alert("Error al registrarse: " + error.message);
+      }
+    });
+
+    // Función para iniciar sesión como invitado
+    document.getElementById("guest-login").addEventListener("click", () => {
+      // Redirigir a la página de libros para el usuario invitado
+      window.location.href = "muestraLibros.html?guest=true"; // Cambia esto según sea necesario
+    });
+</script>
+
+</body>
+</html>

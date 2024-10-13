@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookAffinity</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .libro {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px;
+      background-color: #f9f9f9;
+    }
+    .libro h3 { margin: 0; }
+  </style>
+</head>
+<body>
+  <h1>BookAffinity</h1>
+  
+  <!-- Formulario para agregar un nuevo libro -->
+  <div id="book-form" style="margin: 20px; padding: 20px; border: 1px solid #ddd; background-color: #f0f0f0; width: 400px;">
+    <h2>Registrar un Nuevo Libro</h2>
+
+    <label for="book-title">Título del Libro:</label><br>
+    <input type="text" id="book-title" placeholder="Introduce el título del libro" required><br><br>
+
+    <label for="book-author">Autor:</label><br>
+    <input type="text" id="book-author" placeholder="Introduce el nombre del autor" required><br><br>
+
+    <label for="book-genre">Género:</label><br>
+    <input type="text" id="book-genre" placeholder="Introduce el género literario" required><br><br>
+
+    <label for="book-year">Año de Publicación:</label><br>
+    <input type="number" id="book-year" placeholder="Introduce solo el año (e.g., 2023)" min="1500" max="2100" required><br><br>
+
+    <label for="book-synopsis">Sinopsis:</label><br>
+    <textarea id="book-synopsis" placeholder="Escribe la sinopsis del libro" rows="4" cols="50" required></textarea><br><br>
+
+    <button id="add-book-button">Agregar Libro</button>
+  </div>
+
+  <button id="logout-button" style="display:none;">Cerrar Sesión</button>
+  
+  <!-- Cargar Firebase como un módulo -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getFirestore, collection, setDoc, doc, Timestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('logout-button').style.display = 'block';
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    });
+
+    // Función para obtener la portada del libro desde Google Books API
+    async function obtenerPortada(titulo) {
+      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(titulo)}`);
+      const data = await response.json();
+      if (data.items && data.items.length > 0) {
+        const libro = data.items[0].volumeInfo;
+        if (libro.imageLinks && libro.imageLinks.thumbnail) {
+          return libro.imageLinks.thumbnail;
+        }
+      }
+      return null; // No se encontró portada
+    }
+
+    // Función para agregar un nuevo libro
+    document.getElementById("add-book-button").addEventListener("click", async () => {
+      const titulo = document.getElementById("book-title").value;
+      const autor = document.getElementById("book-author").value;
+      const genero = document.getElementById("book-genre").value;
+      const anio = document.getElementById("book-year").value;
+      const sinopsis = document.getElementById("book-synopsis").value;
+
+      if (titulo && autor && genero && anio && sinopsis) {
+        try {
+          // Obtener la URL de la portada desde Google Books API
+          const portadaURL = await obtenerPortada(titulo);
+
+          // Guardar el libro en Firestore con la URL de la portada
+          await setDoc(doc(db, "Libros", titulo), {
+            Titulo: titulo,
+            Autor: autor,
+            Genero: genero,
+            Fecha: anio,
+            Sinopsis: sinopsis,
+            PortadaURL: portadaURL || null, // Guardar la URL o null si no se encuentra
+            createdAt: Timestamp.now(),
+          });
+
+          alert("Libro añadido correctamente!");
+          window.location.href = "muestraLibros.html";
+        } catch (error) {
+          console.error("Error al agregar el libro:", error);
+          alert("No se pudo añadir el libro. Verifica los permisos.");
+        }
+      } else {
+        alert("Por favor, completa todos los campos.");
+      }
+
+      document.getElementById("book-title").value = "";
+      document.getElementById("book-author").value = "";
+      document.getElementById("book-genre").value = "";
+      document.getElementById("book-year").value = "";
+      document.getElementById("book-synopsis").value = "";
+    });
+
+    document.getElementById("logout-button").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "Prueba.html";
+      }).catch((error) => {
+        console.error("Error al cerrar sesión:", error);
+      });
+    });
+  </script>
+</body>
+</html>

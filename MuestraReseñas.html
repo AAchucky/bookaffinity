@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Reseñas del Libro</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .reseña { border: 1px solid #ddd; padding: 10px; margin: 10px; background-color: #f9f9f9; }
+    button { margin: 5px; }
+    #scroll-top-button { display: none; } /* Ocultar botón por defecto */
+  </style>
+</head>
+<body>
+  
+  <h1 id="titulo-resenas">Reseñas</h1>
+  
+  <div id="botones-navegacion">
+    <button id="logout-button">Cerrar Sesión</button>
+    <button id="volver-libros-button">Volver al Listado de Libros</button>
+    <button id="agregar-reseña-button">Agregar Nueva Reseña</button>
+  </div>
+  
+  <div id="reseñas-container"></div>
+
+  <!-- Botón de subir al inicio colocado aquí -->
+  <button id="scroll-top-button">Subir al Inicio</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+      authDomain: "prueba-d332d.firebaseapp.com",
+      projectId: "prueba-d332d",
+      storageBucket: "prueba-d332d.appspot.com",
+      messagingSenderId: "249157786292",
+      appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    async function obtenerReseñasYActualizarTitulo(tituloLibro) {
+      // Cambiar el título de la página
+      document.getElementById("page-title").textContent = `Reseñas de ${tituloLibro}`;
+      document.getElementById("titulo-resenas").textContent = `Reseñas de "${tituloLibro}"`; 
+
+      await mostrarReseñas(tituloLibro); // Cambiar a 'tituloLibro' para usar el título del libro
+    }
+
+    async function mostrarReseñas(tituloLibro) {
+      const container = document.getElementById("reseñas-container");
+      container.innerHTML = "";  // Limpia el contenedor antes de agregar las reseñas
+
+      // Consulta para obtener reseñas del libro específico usando el título
+      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", tituloLibro));
+      const reseñasSnapshot = await getDocs(reseñasQuery);
+
+      if (reseñasSnapshot.empty) {
+        const noReseñas = document.createElement("p");
+        noReseñas.textContent = "No hay reseñas para este libro.";
+        container.appendChild(noReseñas);
+        return;
+      }
+
+      // Crear un array para almacenar las promesas de obtener los nombres de los autores
+      const promises = [];
+
+      reseñasSnapshot.forEach((reseñaDoc) => {
+        const reseña = reseñaDoc.data();
+        // Almacena la promesa de obtener el nombre del autor
+        promises.push(obtenerNombreUsuario(reseña.usuario_id).then((nombre) => {
+          const reseñaDiv = document.createElement("div");
+          reseñaDiv.className = "reseña";
+          reseñaDiv.innerHTML = `
+            <h4>Reseña de ${nombre}</h4>
+            <p>Puntuación: ${reseña.puntuacion}</p>
+            <p>${reseña.texto}</p>
+          `;
+          container.appendChild(reseñaDiv);
+        }).catch((error) => {
+          console.error(`Error al obtener el nombre del usuario (${reseña.usuario_id}): ${error}`);
+          const reseñaDiv = document.createElement("div");
+          reseñaDiv.className = "reseña";
+          reseñaDiv.innerHTML = `
+            <h4>Reseña de Usuario desconocido</h4>
+            <p>Puntuación: ${reseña.puntuacion}</p>
+            <p>${reseña.texto}</p>
+          `;
+          container.appendChild(reseñaDiv);
+        }));
+      });
+
+      // Espera a que todas las promesas se resuelvan
+      await Promise.all(promises);
+    }
+
+    async function obtenerNombreUsuario(usuarioId) {
+      const usuarioRef = collection(db, "Usuarios");
+      const usuarioQuery = query(usuarioRef, where("__name__", "==", usuarioId)); // Usamos el ID de documento como filtro
+      const usuarioDoc = await getDocs(usuarioQuery);
+      
+      if (!usuarioDoc.empty) {
+        // Retorna el nombre del usuario
+        return usuarioDoc.docs[0].data().nombre || "Nombre no disponible"; 
+      }
+      throw new Error("Usuario no encontrado"); // Lanza un error si no se encuentra
+    }
+
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        tituloLibro: params.get('titulo'), // Obtener el título del libro
+      };
+    }
+
+    // En la función que se ejecuta al cargar la página
+    window.onload = async function() {
+      const { tituloLibro } = getQueryParams();
+      if (tituloLibro) {
+        await obtenerReseñasYActualizarTitulo(tituloLibro);
+      } else {
+        console.error("No se proporcionó un título de libro.");
+      }
+    };
+
+    // Evento para cerrar sesión
+    document.getElementById("logout-button").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        console.log("Usuario desconectado.");
+        window.location.href = "Prueba.html"; // Redirigir a la página de inicio de sesión
+      }).catch((error) => {
+        console.error("Error al cerrar sesión:", error);
+      });
+    });
+
+    // Evento para volver al listado de libros
+    document.getElementById("volver-libros-button").addEventListener("click", () => {
+      window.location.href = "muestraLibros.html"; // Cambia a tu lista de libros
+    });
+
+    // Evento para agregar una nueva reseña
+    document.getElementById("agregar-reseña-button").addEventListener("click", () => {
+      const libroTitulo = new URLSearchParams(window.location.search).get('titulo'); // Obtener el título del libro
+      if (libroTitulo) {
+        window.location.href = `agregarReseña.html?titulo=${encodeURIComponent(libroTitulo)}`;
+      } else {
+        alert("No se ha proporcionado un título de libro.");
+      }
+    });
+
+    // Evento para subir al inicio de la página
+    document.getElementById("scroll-top-button").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Mostrar u ocultar el botón de subir al inicio según el scroll
+    window.addEventListener("scroll", () => {
+      const button = document.getElementById("scroll-top-button");
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        button.style.display = "block"; // Mostrar botón
+      } else {
+        button.style.display = "none"; // Ocultar botón
+      }
+    });
+  </script>
+</body>
+</html>
