@@ -67,27 +67,68 @@
 				    reviews.forEach(review => voteCounts[review.puntuacion - 1]++); // Incrementar el contador correspondiente
 				
 				    // Dibujar la gráfica con Chart.js
-				    const ctx = document.getElementById("votes-chart").getContext("2d");
-				    new Chart(ctx, {
-				      type: 'bar',
-				      data: {
-				        labels: Array.from({ length: 10 }, (_, i) => i + 1), // Números del 1 al 10
-				        datasets: [{
-				          label: 'Votos',
-				          data: voteCounts,
-				          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-				          borderColor: 'rgba(75, 192, 192, 1)',
-				          borderWidth: 1
-				        }]
-				      },
-				      options: {
-				        scales: {
-				          y: {
-				            beginAtZero: true
-				          }
-				        }
-				      }
-				    });
+						document.addEventListener("DOMContentLoaded", () => {
+						  const ctx = document.getElementById('votes-chart').getContext('2d');
+						  const votesChart = new Chart(ctx, {
+						    type: 'horizontalBar', // Cambia a horizontalBar para un estilo más moderno
+						    data: {
+						      labels: ['Opción 1', 'Opción 2', 'Opción 3', 'Opción 4'], // Cambia las etiquetas según tus opciones
+						      datasets: [{
+						        label: 'Votos',
+						        data: voteCounts, // Asegúrate de que voteCounts esté definido
+						        backgroundColor: [
+						          'rgba(75, 192, 192, 0.2)',
+						          'rgba(153, 102, 255, 0.2)',
+						          'rgba(255, 159, 64, 0.2)',
+						          'rgba(255, 99, 132, 0.2)',
+						        ],
+						        borderColor: [
+						          'rgba(75, 192, 192, 1)',
+						          'rgba(153, 102, 255, 1)',
+						          'rgba(255, 159, 64, 1)',
+						          'rgba(255, 99, 132, 1)',
+						        ],
+						        borderWidth: 1
+						      }]
+						    },
+						    options: {
+						      responsive: true,
+						      maintainAspectRatio: false, // Permite controlar el tamaño
+						      scales: {
+						        x: {
+						          beginAtZero: true,
+						          title: {
+						            display: true,
+						            text: 'Número de Votos' // Título del eje X
+						          }
+						        },
+						        y: {
+						          title: {
+						            display: true,
+						            text: 'Opciones' // Título del eje Y
+						          }
+						        }
+						      },
+						      plugins: {
+						        legend: {
+						          display: true,
+						          position: 'top',
+						        },
+						        tooltip: {
+						          callbacks: {
+						            label: function(tooltipItem) {
+						              return `Votos: ${tooltipItem.raw}`; // Personaliza el tooltip para mostrar el número de votos
+						            }
+						          }
+						        }
+						      }
+						    }
+						  });
+
+							  // Añadir el total de votos
+							  const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
+							  document.getElementById('total-votes').innerText = `Total de Votos: ${totalVotes}`;
+							});				    
 				  } else {
 				    document.getElementById("average-rating").innerText = "N/A";
 				  }
@@ -187,7 +228,7 @@
 	    star.addEventListener('click', function() {
 	      const allStars = document.querySelectorAll('.star-rating .star');
 	      for (let i = 0; i < allStars.length; i++) {
-	        allStars[i].textContent = i <= index ? '★' : '☆'; // Llena las estrellas hasta donde se haya hecho clic
+	        allStars[i].textContent = i <= index ? '?' : '?'; // Llena las estrellas hasta donde se haya hecho clic
 	      }         
 	    });         
 	  });  
