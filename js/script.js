@@ -84,7 +84,7 @@
 				  } else {
 				    console.error('Elemento con ID total-votes no encontrado');
 				  }
-				});
+ 				});
 
 				  // Mostrar el modal
 				  document.getElementById("book-modal").style.display = "flex";
@@ -181,24 +181,6 @@ updateStarRating(averageRating);
 // Para el caso de "N/A"
 averageRating = 'N/A';
 updateStarRating(averageRating);
-
-		
-document.addEventListener("DOMContentLoaded", () => {
-  // Generar los datos para los votos
-  const voteCounts = Array(10).fill(0); // Array para contar votos del 1 al 10
-  if (reviews && reviews.length > 0) { // Verifica que 'reviews' esté definido
-    reviews.forEach(review => voteCounts[review.puntuacion - 1]++); // Incrementar el contador correspondiente
-  }
-
-  // Añadir el total de votos
-  const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
-  const totalVotesElement = document.getElementById('total-votes');
-  if (totalVotesElement) {
-    totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
-  } else {
-    console.error('Elemento con ID total-votes no encontrado');
-  }
-});
 
 
 		
