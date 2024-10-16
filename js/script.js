@@ -183,32 +183,23 @@ averageRating = 'N/A';
 updateStarRating(averageRating);
 
 		
-		// Generar gráfica con Chart.js
-		function generateChart(voteCounts) {
-		  const ctx = document.getElementById('votes-chart').getContext('2d');
-		  new Chart(ctx, {
-		    type: 'bar',
-		    data: {
-		      labels: Array.from({ length: 10 }, (_, i) => i + 1),
-		      datasets: [{
-		        label: 'Votos',
-		        data: voteCounts,
-		        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-		        borderColor: 'rgba(75, 192, 192, 1)',
-		        borderWidth: 1
-		      }]
-		    },
-		    options: {
-		      indexAxis: 'y', // Hace que las barras sean horizontales
-		      scales: {
-		        x: { beginAtZero: true }
-		      },
-		      plugins: {
-		        legend: { display: false }
-		      }
-		    }
-		  });
-		}
+document.addEventListener("DOMContentLoaded", () => {
+  // Generar los datos para los votos
+  const voteCounts = Array(10).fill(0); // Array para contar votos del 1 al 10
+  if (reviews && reviews.length > 0) { // Verifica que 'reviews' esté definido
+    reviews.forEach(review => voteCounts[review.puntuacion - 1]++); // Incrementar el contador correspondiente
+  }
+
+  // Añadir el total de votos
+  const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
+  const totalVotesElement = document.getElementById('total-votes');
+  if (totalVotesElement) {
+    totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
+  } else {
+    console.error('Elemento con ID total-votes no encontrado');
+  }
+});
+
 
 		
  		document.querySelectorAll('.star-rating .star').forEach(function(star, index) {
