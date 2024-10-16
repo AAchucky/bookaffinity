@@ -70,76 +70,26 @@
 				  updateStarRating(averageRating);
 
 				document.addEventListener("DOMContentLoaded", () => {
-				  // Generar los datos para la gráfica de votos
+				  // Generar los datos para los votos
 				  const voteCounts = Array(10).fill(0); // Array para contar votos del 1 al 10
 				  if (reviews && reviews.length > 0) { // Verifica que 'reviews' esté definido
 				    reviews.forEach(review => voteCounts[review.puntuacion - 1]++); // Incrementar el contador correspondiente
 				  }
 				
-				  const ctx = document.getElementById('votes-chart').getContext('2d');
-				  
-				  if (ctx) {
-				    new Chart(ctx, {
-				      type: 'bar', // Tipo de gráfica: barra
-				      data: {
-				        labels: ['1 estrella', '2 estrellas', '3 estrellas', '4 estrellas', '5 estrellas', '6 estrellas', '7 estrellas', '8 estrellas', '9 estrellas', '10 estrellas'], // Etiquetas para cada estrella
-				        datasets: [{
-				          label: 'Votos',
-				          data: voteCounts, // Datos de votos
-				          backgroundColor: Array(10).fill('rgba(75, 192, 192, 0.2)'), // Color de fondo para cada barra
-				          borderColor: Array(10).fill('rgba(75, 192, 192, 1)'), // Color de borde para cada barra
-				          borderWidth: 1
-				        }]
-				      },
-				      options: {
-				        responsive: true,
-				        maintainAspectRatio: false, // Permite controlar el tamaño
-				        indexAxis: 'y', // Cambia a una gráfica de barras horizontal
-				        scales: {
-				          x: {
-				            beginAtZero: true,
-				            title: {
-				              display: true,
-				              text: 'Número de Votos' // Título del eje X
-				            }
-				          },
-				          y: {
-				            title: {
-				              display: true,
-				              text: 'Estrellas' // Título del eje Y
-				            }
-				          }
-				        },
-				        plugins: {
-				          legend: {
-				            display: false, // Mostrar o no la leyenda
-				          },
-				          tooltip: {
-				            callbacks: {
-				              label: function(tooltipItem) {
-				                return `Votos: ${tooltipItem.raw}`; // Personaliza el tooltip para mostrar el número de votos
-				              }
-				            }
-				          }
-				        }
-				      }
-				    });
-				  
-				    // Añadir el total de votos
-				    const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
-				    document.getElementById('total-votes').innerText = `Total de Votos: ${totalVotes}`;
+				  // Añadir el total de votos
+				  const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
+				  const totalVotesElement = document.getElementById('total-votes');
+				  if (totalVotesElement) {
+				    totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
 				  } else {
-				    console.error('No se pudo obtener el contexto de 2D del canvas');
+				    console.error('Elemento con ID total-votes no encontrado');
 				  }
 				});
 
-				
 				  // Mostrar el modal
 				  document.getElementById("book-modal").style.display = "flex";
 				});
 				
-
-
         container.appendChild(libroDiv);
       });
     }
