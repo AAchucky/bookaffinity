@@ -203,7 +203,7 @@
 		  display: inline-block;
 		  width: 100px; /* Ajusta el tamaño */
 		  height: 20px;
-		  background: url('path_to_star_sprite.png') repeat-x;
+		  background: url('../Imagenes/star.webp') repeat-x;
 		  background-size: 10%; /* Controla la proporción de estrellas llenas */
 		}
 		
