@@ -189,9 +189,14 @@
 		// Actualizar la barra de estrellas según la calificación promedio (0-10)
 		function updateStarRating(rating) {
 		  const starsElement = document.querySelector('.stars');
-		  const percentage = (rating / 10) * 100; // Calcular el porcentaje lleno
-		  starsElement.style.backgroundSize = `${percentage}% 100%`; 
+		  if (starsElement) {
+		    const percentage = (rating / 10) * 100; // Calcular el porcentaje lleno
+		    starsElement.style.backgroundSize = `${percentage}% 100%`;
+		  } else {
+		    console.warn('No se encontró el elemento de estrellas');
+		  }
 		}
+
 		
 		// Generar gráfica con Chart.js
 		function generateChart(voteCounts) {
