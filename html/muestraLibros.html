@@ -19,8 +19,6 @@
     <button class="scroll-btn right" id="btn-right">&#8250;</button>
   </div>
 
-  <div class="stars"></div>
-
   <h1>BookAffinity - Recomendaciones</h1>
 
   <div class="books-section">
@@ -41,20 +39,23 @@
 	    </div>
 	
 	    <p id="modal-description"></p>
-	
-	    <!-- Puntuación media -->
-	    <div id="book-rating">
-	      <p><strong>Puntuación Media:</strong> <span id="average-rating">N/A</span></p>
-	    </div>
-	
-	    <!-- Gráfica de votos -->
-	    <canvas id="votes-chart" width="300" height="150"></canvas>
-	
-	    <!-- Enlaces de Ver Reseñas y Agregar Reseña -->
-	    <div class="review-links">
-	      <a id="modal-review-link" href="#" class="add-review">Agregar Reseña</a>
-	      <a id="modal-view-reviews-link" href="#" class="view-reviews">Ver Reseñas</a>
-	    </div>
+		
+		<!-- Puntuación media -->
+		<div id="book-rating">
+		  <p><strong>Puntuación Media:</strong> <span id="average-rating">N/A</span></p>
+		  
+		  <!-- Aquí se añaden las estrellas -->
+		  <div class="stars"></div>
+		</div>
+		
+		<!-- Gráfica de votos -->
+		<canvas id="votes-chart" width="300" height="150"></canvas>
+		
+		<!-- Enlaces de Ver Reseñas y Agregar Reseña -->
+		<div class="review-links">
+		  <a id="modal-review-link" href="#" class="add-review">Agregar Reseña</a>
+		  <a id="modal-view-reviews-link" href="#" class="view-reviews">Ver Reseñas</a>
+		</div>
 	
 	    <p><strong>Más información:</strong> <a id="modal-link" href="#" target="_blank">Ver en Google Books</a></p>
 	  </div>
