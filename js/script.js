@@ -57,10 +57,17 @@
 				  const reviews = reviewsSnapshot.docs.map(doc => doc.data());
 				  
 				  // Calcular la puntuación media
+				  let averageRating = 0; // Inicializar la variable
 				  if (reviews.length > 0) {
-				    const totalScore = reviews.reduce((sum, review) => sum + review.puntuacion, 0);
-				    const averageRating = (totalScore / reviews.length).toFixed(1);
-				    document.getElementById("average-rating").innerText = averageRating;
+				     const totalScore = reviews.reduce((sum, review) => sum + review.puntuacion, 0);
+				     averageRating = (totalScore / reviews.length).toFixed(1);
+				     document.getElementById("average-rating").innerText = averageRating;
+				  } else {
+				     document.getElementById("average-rating").innerText = "N/A";
+				  }
+
+				  // Llamar a la función para actualizar la barra de estrellas
+				  updateStarRating(averageRating);
 				
 				    // Generar los datos para la gráfica de votos
 				    const voteCounts = Array(10).fill(0); // Array para contar votos del 1 al 10
@@ -224,10 +231,7 @@
 		    }
 		  });
 		}
-		
-		// Ejemplo de uso (reemplaza con datos reales)
-		updateStarRating(averageRating);
-		//generateChart([5, 10, 15, 30, 50, 70, 90, 110, 120, 150]);
+
 		
  		document.querySelectorAll('.star-rating .star').forEach(function(star, index) {
 	    star.addEventListener('click', function() {
