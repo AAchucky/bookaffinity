@@ -190,17 +190,30 @@
       document.getElementById("book-modal").style.display = "none";
     });
     
-		// Actualizar la barra de estrellas según la calificación promedio (0-10)
-		function updateStarRating(rating) {
-		  const starsElement = document.querySelector('.stars');
-		  if (starsElement) {
-		    const percentage = (rating / 10) * 100; // Calcular el porcentaje lleno
-		    starsElement.style.backgroundSize = `${percentage}% 100%`;
-		  } else {
-		    console.warn('No se encontró el elemento de estrellas');
-		  }
-		}
-
+	function updateStarRating(rating) {
+	    const starsElement = document.getElementById('star-rating');
+	    starsElement.innerHTML = ''; // Limpiar contenido previo
+	
+	    // Calcular cuántas estrellas llenas se deben mostrar
+	    const fullStars = Math.floor(rating); // Estrellas llenas enteras
+	    const halfStar = rating % 1 !== 0; // Verifica si hay medio
+	
+	    // Crear las estrellas
+	    for (let i = 0; i < 10; i++) {
+	        const star = document.createElement('span');
+	        star.className = 'star';
+	
+	        if (i < fullStars) {
+	            star.classList.add('filled'); // Rellenar estrellas completas
+	        } else if (i === fullStars && halfStar) {
+	            star.innerHTML = '&#9734;'; // Estrella vacía para medio
+	        } else {
+	            star.innerHTML = '&#9734;'; // Estrella vacía
+	        }
+	
+	        starsElement.appendChild(star);
+	    }
+	}
 		
 		// Generar gráfica con Chart.js
 		function generateChart(voteCounts) {
