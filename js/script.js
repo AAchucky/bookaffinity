@@ -136,9 +136,6 @@
 							  const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
 							  document.getElementById('total-votes').innerText = `Total de Votos: ${totalVotes}`;
 							});				    
-				  } else {
-				    document.getElementById("average-rating").innerText = "N/A";
-				  }
 				
 				  // Mostrar el modal
 				  document.getElementById("book-modal").style.display = "flex";
