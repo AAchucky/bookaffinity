@@ -221,8 +221,8 @@
 		}
 		
 		// Ejemplo de uso (reemplaza con datos reales)
-		updateStarRating(9.0);
-		generateChart([5, 10, 15, 30, 50, 70, 90, 110, 120, 150]);
+		updateStarRating(averageRating);
+		//generateChart([5, 10, 15, 30, 50, 70, 90, 110, 120, 150]);
 		
  		document.querySelectorAll('.star-rating .star').forEach(function(star, index) {
 	    star.addEventListener('click', function() {
