@@ -190,30 +190,51 @@
       document.getElementById("book-modal").style.display = "none";
     });
     
-	function updateStarRating(rating) {
-	    const starsElement = document.getElementById('star-rating');
-	    starsElement.innerHTML = ''; // Limpiar contenido previo
-	
-	    // Calcular cuántas estrellas llenas se deben mostrar
-	    const fullStars = Math.floor(rating); // Estrellas llenas enteras
-	    const halfStar = rating % 1 !== 0; // Verifica si hay medio
-	
-	    // Crear las estrellas
-	    for (let i = 0; i < 10; i++) {
-	        const star = document.createElement('span');
-	        star.className = 'star';
-	
-	        if (i < fullStars) {
-	            star.classList.add('filled'); // Rellenar estrellas completas
-	        } else if (i === fullStars && halfStar) {
-	            star.innerHTML = '&#9734;'; // Estrella vacía para medio
-	        } else {
-	            star.innerHTML = '&#9734;'; // Estrella vacía
-	        }
-	
-	        starsElement.appendChild(star);
-	    }
-	}
+function updateStarRating(rating) {
+    const starsElement = document.getElementById('star-rating');
+    starsElement.innerHTML = ''; // Limpiar contenido previo
+
+    // Comprobar si la calificación es "N/A"
+    if (rating === 'N/A' || rating === null || rating === undefined) {
+        for (let i = 0; i < 10; i++) {
+            const star = document.createElement('span');
+            star.className = 'star';
+            star.innerHTML = '&#9734;'; // Estrella vacía
+            starsElement.appendChild(star);
+        }
+        return; // Salir de la función
+    }
+
+    // Calcular cuántas estrellas llenas se deben mostrar
+    const fullStars = Math.floor(rating); // Estrellas llenas enteras
+    const halfStar = rating % 1 !== 0; // Verifica si hay medio
+
+    // Crear las estrellas
+    for (let i = 0; i < 10; i++) {
+        const star = document.createElement('span');
+        star.className = 'star';
+
+        if (i < fullStars) {
+            star.classList.add('filled'); // Rellenar estrellas completas
+            star.innerHTML = '&#9733;'; // Estrella llena
+        } else if (i === fullStars && halfStar) {
+            star.innerHTML = '&#9734;'; // Estrella vacía para medio
+        } else {
+            star.innerHTML = '&#9734;'; // Estrella vacía
+        }
+
+        starsElement.appendChild(star);
+    }
+}
+
+// Ejemplo de uso
+let averageRating = 9; // Valor de ejemplo
+updateStarRating(averageRating);
+
+// Para el caso de "N/A"
+averageRating = 'N/A';
+updateStarRating(averageRating);
+
 		
 		// Generar gráfica con Chart.js
 		function generateChart(voteCounts) {
