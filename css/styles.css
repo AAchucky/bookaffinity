@@ -203,7 +203,7 @@
 		  display: inline-block;
 		  width: 100px; /* Ajusta el tamaño */
 		  height: 20px;
-		  background: url('./Imagenes/star.webp') repeat-x;
+		  background: url('https://aachucky.github.io/bookaffinity/Imagenes/star.webp') repeat-x;
 		  background-size: 10%; /* Controla la proporción de estrellas llenas */
 		}
 		
