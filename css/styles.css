@@ -263,10 +263,6 @@
 	    margin: 10px 0; /* Espacio entre las reseñas */
 	}
 	
-	.reseña:nth-child(even) {
-	  background-color: #f1f1f1;
-	}
-	
 	.reseña h4 {
 	  margin: 0;
 	  color: #333;
