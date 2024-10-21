@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Obtener las reseñas del libro desde Firestore
         const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
         const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+        console.log(reviews);
 
         // Calcular la puntuación media
         let averageRating = 0; // Inicializar la v	ariable
