@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       libroDiv.addEventListener("click", async () => {
+        console.log("Clic en el libro:", titulo); // Depuración
+      
         document.getElementById("modal-title").innerText = titulo;
         document.getElementById("modal-author").innerText = autor;
         document.getElementById("modal-description").innerText = descripcion;
@@ -51,69 +53,62 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modal-link").href = infoLink;
       
         document.getElementById("modal-review-link").href = `agregarReseña.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
-        document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+        document.getElementById("modal-view-reviews-link").href = `muestraReseñas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
       
         // Obtener las reseñas del libro desde Firestore
-        const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
-        
-        // Verificar si hay reseñas
-        if (reviewsSnapshot.empty) {
-          console.log("No se encontraron reseñas para este libro");
-        } else {
-          console.log("Reseñas encontradas");
+        try {
+          const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
+      
+          const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+          console.log("Reseñas obtenidas:", reviews); // Depuración
+      
+          // Mostrar las reseñas en el modal
+          const reviewsContainer = document.getElementById("reviews-container");
+          reviewsContainer.innerHTML = ""; // Limpiar reseñas anteriores
+      
+          reviews.forEach(review => {
+            const reviewDiv = document.createElement("div");
+            reviewDiv.classList.add("review");
+      
+            const reviewContent = `
+              <p><strong>Reseña:</strong> ${review.comentario || 'No hay comentario'}</p>
+              <p><strong>Puntuación:</strong> ${review.puntuacion || 'N/A'}/10</p>
+            `;
+      
+            reviewDiv.innerHTML = reviewContent;
+            reviewsContainer.appendChild(reviewDiv);
+          });
+      
+          // Calcular la puntuación media
+          let averageRating = 0; // Inicializar la variable
+          if (reviews.length > 0) {
+            const totalScore = reviews.reduce((sum, review) => sum + review.puntuacion, 0);
+            averageRating = (totalScore / reviews.length).toFixed(1);
+            document.getElementById("average-rating").innerText = averageRating;
+          } else {
+            document.getElementById("average-rating").innerText = "N/A";
+          }
+      
+          // Llamar a la función para actualizar la barra de estrellas
+          updateStarRating(averageRating);
+      
+        } catch (error) {
+          console.error("Error al obtener reseñas:", error);
         }
       
-        const reviews = reviewsSnapshot.docs.map(doc => doc.data());
-        console.log("Reseñas obtenidas:", reviews); // Depuración
+        // Depuración: Verificar si el modal se está mostrando
+        console.log("Mostrando el modal para el libro:", titulo);
       
-        // Mostrar las reseñas en el modal
-        const reviewsContainer = document.getElementById("reviews-container");
-        reviewsContainer.innerHTML = ""; // Limpiar reseñas anteriores
-      
-        reviews.forEach(review => {
-          const reviewDiv = document.createElement("div");
-          reviewDiv.classList.add("review");
-      
-        const reviewContent = `
-          <p><strong>Reseña:</strong> ${review.comentario || 'No hay comentario'}</p>
-          <p><strong>Puntuación:</strong> ${review.puntuacion || 'N/A'}/10</p>
-          `;
-      
-          reviewDiv.innerHTML = reviewContent;
-          reviewsContainer.appendChild(reviewDiv);
-        });
-
-        // Calcular la puntuación media
-        let averageRating = 0; // Inicializar la variable
-        if (reviews.length > 0) {
-          const totalScore = reviews.reduce((sum, review) => sum + review.puntuacion, 0);
-          averageRating = (totalScore / reviews.length).toFixed(1);
-          document.getElementById("average-rating").innerText = averageRating;
-        } else {
-          document.getElementById("average-rating").innerText = "N/A";
-        }
-
-        // Llamar a la función para actualizar la barra de estrellas
-        updateStarRating(averageRating);
-
-        // Generar los datos para los votos
-        const voteCounts = Array(10).fill(0); // Array para contar votos del 1 al 10
-        if (reviews && reviews.length > 0) {
-          reviews.forEach(review => voteCounts[review.puntuacion - 1]++);
-        }
-
-        // Añadir el total de votos
-        const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
-        const totalVotesElement = document.getElementById('total-votes');
-        if (totalVotesElement) {
-          totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
-        } else {
-          console.error('Elemento con ID total-votes no encontrado');
-        }
-
         // Mostrar el modal
         document.getElementById("book-modal").style.display = "flex";
       });
+      
+      // Cerrar el modal
+      document.getElementById("close-modal").addEventListener("click", () => {
+        document.getElementById("book-modal").style.display = "none";
+        console.log("Modal cerrado"); // Depuración
+      });
+
 
       container.appendChild(libroDiv);
     });
