@@ -256,12 +256,11 @@
 
 	/* Estilos específicos de las reseñas */
 	.reseña {
-	  border-radius: 10px;
-	  padding: 15px;
-	  margin: 15px 0;
-	  background-color: #fff;
-	  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-	  position: relative;
+	    background-color: white; /* Fondo blanco para cada reseña */
+	    padding: 15px; /* Espacio interno */
+	    border-radius: 5px; /* Bordes redondeados */
+	    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave */
+	    margin: 10px 0; /* Espacio entre las reseñas */
 	}
 	
 	.reseña:nth-child(even) {
