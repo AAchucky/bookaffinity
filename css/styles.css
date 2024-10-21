@@ -253,3 +253,34 @@
 		.star-rating .star:hover ~ .star {
 		  color: #FFAA00; /* Cambia el color al pasar el mouse sobre las estrellas */
 		}
+
+	/* Estilos específicos de las reseñas */
+	.reseña {
+	  border-radius: 10px;
+	  padding: 15px;
+	  margin: 15px 0;
+	  background-color: #fff;
+	  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	  position: relative;
+	}
+	
+	.reseña:nth-child(even) {
+	  background-color: #f1f1f1;
+	}
+	
+	.reseña h4 {
+	  margin: 0;
+	  color: #333;
+	  font-size: 1.2rem;
+	}
+	
+	.reseña p {
+	  margin: 5px 0;
+	  color: #555;
+	}
+	
+	.reseña .fecha {
+	  font-size: 0.9rem;
+	  color: #888;
+	  margin-bottom: 10px;
+	}
