@@ -52,12 +52,12 @@
       await mostrarReseñas(tituloLibro); // Cambiar a 'tituloLibro' para usar el título del libro
     }
 
-    async function mostrarReseñas(tituloLibro) {
+    async function mostrarReseñas(bookId) {
       const container = document.getElementById("reseñas-container");
       container.innerHTML = "";  // Limpia el contenedor antes de agregar las reseñas
 
       // Consulta para obtener reseñas del libro específico usando el título
-      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", tituloLibro));
+      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", bookId));
       const reseñasSnapshot = await getDocs(reseñasQuery);
 
       if (reseñasSnapshot.empty) {
@@ -114,17 +114,20 @@
     function getQueryParams() {
       const params = new URLSearchParams(window.location.search);
       return {
+        bookId: params.get('bookId'), // Obtener el ID del libro
         tituloLibro: params.get('titulo'), // Obtener el título del libro
       };
     }
 
     // En la función que se ejecuta al cargar la página
     window.onload = async function() {
-      const { tituloLibro } = getQueryParams();
-      if (tituloLibro) {
-        await obtenerReseñasYActualizarTitulo(tituloLibro);
+      const { bookId, tituloLibro } = getQueryParams();
+      if (bookId && tituloLibro) {
+        document.getElementById("page-title").textContent = `Reseñas de ${tituloLibro}`;
+        document.getElementById("titulo-resenas").textContent = `Reseñas de "${tituloLibro}"`;
+        await mostrarReseñas(bookId); // Pasar 'bookId' para buscar las reseñas correctas
       } else {
-        console.error("No se proporcionó un título de libro.");
+        console.error("No se proporcionó un ID o título de libro.");
       }
     };
 
