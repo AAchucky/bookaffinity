@@ -49,13 +49,39 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("modal-description").innerText = descripcion;
         document.getElementById("modal-image").src = portada;
         document.getElementById("modal-link").href = infoLink;
-
+      
         document.getElementById("modal-review-link").href = `agregarReseña.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
-        document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
-
+        document.getElementById("modal-view-reviews-link").href = `muestraReseñas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+      
         // Obtener las reseñas del libro desde Firestore
         const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
+        
+        // Verificar si hay reseñas
+        if (reviewsSnapshot.empty) {
+          console.log("No se encontraron reseñas para este libro");
+        } else {
+          console.log("Reseñas encontradas");
+        }
+      
         const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+        console.log("Reseñas obtenidas:", reviews); // Depuración
+      
+        // Mostrar las reseñas en el modal
+        const reviewsContainer = document.getElementById("reviews-container");
+        reviewsContainer.innerHTML = ""; // Limpiar reseñas anteriores
+      
+        reviews.forEach(review => {
+          const reviewDiv = document.createElement("div");
+          reviewDiv.classList.add("review");
+      
+        const reviewContent = `
+          <p><strong>Reseña:</strong> ${review.comentario || 'No hay comentario'}</p>
+          <p><strong>Puntuación:</strong> ${review.puntuacion || 'N/A'}/10</p>
+          `;
+      
+          reviewDiv.innerHTML = reviewContent;
+          reviewsContainer.appendChild(reviewDiv);
+        });
 
         // Calcular la puntuación media
         let averageRating = 0; // Inicializar la variable
