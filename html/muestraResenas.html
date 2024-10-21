@@ -111,46 +111,45 @@
     }
 
     async function mostrarReseñas(bookId) {
-      const container = document.getElementById("reseñas-container");
-      container.innerHTML = "";  
-
-      const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", bookId));
-      const reseñasSnapshot = await getDocs(reseñasQuery);
-
-      if (reseñasSnapshot.empty) {
-        const noReseñas = document.createElement("p");
-        noReseñas.textContent = "No hay reseñas para este libro.";
-        container.appendChild(noReseñas);
-        return;
-      }
-
-      const promises = [];
-
-      reseñasSnapshot.forEach((reseñaDoc, index) => {
-        const reseña = reseñaDoc.data();
-        promises.push(obtenerNombreUsuario(reseña.usuario_id).then((nombre) => {
-          const reseñaDiv = document.createElement("div");
-          reseñaDiv.className = "reseña";
-          reseñaDiv.style.backgroundColor = index % 2 === 0 ? "#f9f9f9" : "#e8e8e8"; // Alterna colores
-
-          // Fecha de la reseña
-          const fechaReseña = new Date(reseña.fecha.seconds * 1000).toLocaleDateString();
-
-          // Agregar contenido a la reseña con estrellas
-          reseñaDiv.innerHTML = `
-            <h4>Reseña de ${nombre}</h4>
-            <div class="fecha">${fechaReseña}</div>
-            <div class="stars">${generarEstrellas(reseña.puntuacion)}</div>
-            <p>${reseña.texto}</p>
-          `;
-
-          container.appendChild(reseñaDiv);
-        }).catch((error) => {
-          console.error(`Error al obtener el nombre del usuario (${reseña.usuario_id}): ${error}`);
-        }));
-      });
-
-      await Promise.all(promises);
+        const container = document.getElementById("reseñas-container");
+        container.innerHTML = "";  
+    
+        const reseñasQuery = query(collection(db, "Resenas"), where("libro_id", "==", bookId));
+        const reseñasSnapshot = await getDocs(reseñasQuery);
+    
+        if (reseñasSnapshot.empty) {
+            const noReseñas = document.createElement("p");
+            noReseñas.textContent = "No hay reseñas para este libro.";
+            container.appendChild(noReseñas);
+            return;
+        }
+    
+        const promises = [];
+    
+        reseñasSnapshot.forEach((reseñaDoc) => {
+            const reseña = reseñaDoc.data();
+            promises.push(obtenerNombreUsuario(reseña.usuario_id).then((nombre) => {
+                const reseñaDiv = document.createElement("div");
+                reseñaDiv.className = "reseña"; // Mantener el fondo blanco
+    
+                // Fecha de la reseña
+                const fechaReseña = new Date(reseña.fecha.seconds * 1000).toLocaleDateString();
+    
+                // Agregar contenido a la reseña con estrellas
+                reseñaDiv.innerHTML = `
+                    <h4>Reseña de ${nombre}</h4>
+                    <div class="fecha">${fechaReseña}</div>
+                    <div class="stars">${generarEstrellas(reseña.puntuacion)}</div>
+                    <p>${reseña.texto}</p>
+                `;
+    
+                container.appendChild(reseñaDiv);
+            }).catch((error) => {
+                console.error(`Error al obtener el nombre del usuario (${reseña.usuario_id}): ${error}`);
+            }));
+        });
+    
+        await Promise.all(promises);
     }
 
     function generarEstrellas(puntuacion) {
