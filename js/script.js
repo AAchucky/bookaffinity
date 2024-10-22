@@ -16,6 +16,35 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+  const searchButton = document.getElementById("search-button");
+  const searchInput = document.getElementById("search-input");
+
+  searchButton.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if (query) {
+      buscarLibros(query);
+    } else {
+      alert("Por favor, ingresa un término de búsqueda.");
+    }
+  });
+
+  async function buscarLibros(query) {
+    try {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=YOUR_API_KEY`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.items) {
+        mostrarLibros(data.items, "novedades-container");
+      } else {
+        document.getElementById("novedades-container").innerHTML = "<p>No se encontraron libros.</p>";
+      }
+    } catch (error) {
+      console.error("Error al buscar libros:", error);
+    }
+  }
+
+document.addEventListener("DOMContentLoaded", () => {
 
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
