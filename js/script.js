@@ -16,35 +16,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const searchButton = document.getElementById("search-button");
-  const searchInput = document.getElementById("search-input");
-
-  searchButton.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    if (query) {
-      buscarLibros(query);
-    } else {
-      alert("Por favor, ingresa un término de búsqueda.");
-    }
-  });
-
-  async function buscarLibros(query) {
-    try {
-      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=YOUR_API_KEY`;
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.items) {
-        mostrarLibros(data.items, "novedades-container");
-      } else {
-        document.getElementById("novedades-container").innerHTML = "<p>No se encontraron libros.</p>";
-      }
-    } catch (error) {
-      console.error("Error al buscar libros:", error);
-    }
-  }
-
-document.addEventListener("DOMContentLoaded", () => {
 
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
@@ -123,6 +94,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Función de búsqueda de libros
+  async function buscarLibros(query) {
+    try {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=YOUR_API_KEY`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.items) {
+        mostrarLibros(data.items, "novedades-container");
+      } else {
+        document.getElementById("novedades-container").innerHTML = "<p>No se encontraron libros.</p>";
+      }
+    } catch (error) {
+      console.error("Error al buscar libros:", error);
+    }
+  }
+
+  // Cargar libros al iniciar la página
   async function cargarNovedades() {
     const url = 'https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=AIzaSyAPkUEVaKIyM-AzsMMbU-tfU6VuKQvhNM4&maxResults=10';
     cargarLibros(url, "novedades-container");
@@ -133,9 +122,46 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarLibros(url, "recomendaciones-container");
   }
 
-  // Cargar libros al iniciar la página
+  // Función para mostrar los libros en la interfaz
+  function mostrarLibros(libros, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; // Limpiar el contenedor
+
+    libros.forEach(libro => {
+      const libroDiv = document.createElement("div");
+      libroDiv.classList.add("libro");
+
+      const titulo = libro.volumeInfo.title;
+      const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(", ") : "Autor desconocido";
+      const descripcion = libro.volumeInfo.description || "Descripción no disponible";
+      const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : "https://books.google.com/googlebooks/images/no_cover_thumb.gif";
+      const infoLink = libro.volumeInfo.infoLink;
+
+      libroDiv.innerHTML = `
+        <img src="${portada}" alt="Portada del libro">
+        <h3>${titulo}</h3>
+        <p>${descripcion}</p>
+        <p><strong>Autor:</strong> ${autor}</p>
+        <a href="${infoLink}" target="_blank">Más información</a>
+      `;
+
+      container.appendChild(libroDiv);
+    });
+  }
+
   cargarNovedades();
   cargarRecomendaciones();
+
+  // Escucha al evento del botón de búsqueda
+  const searchButton = document.getElementById("search-button");
+  searchButton.addEventListener("click", () => {
+    const query = document.getElementById("search-input").value.trim();
+    if (query) {
+      buscarLibros(query);
+    } else {
+      alert("Por favor, ingresa un término de búsqueda.");
+    }
+  });
 
   // Desplazamiento lateral
   const containers = [
