@@ -20,39 +20,10 @@ const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Función para cargar libros en un contenedor específico
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
     const data = await response.json();
-    const libros = data.items;
-
-    const container = document.getElementById(containerId);
-    container.innerHTML = ""; // Limpiar contenedor
-
-    libros.forEach(libro => {
-      const libroDiv = document.createElement("div");
-      libroDiv.classList.add("libro");
-
-      const titulo = libro.volumeInfo.title;
-      const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
-      const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
-      const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
-      const infoLink = libro.volumeInfo.infoLink;
-      const bookId = libro.id;
-
-      libroDiv.innerHTML = `
-        <img src="${portada}" alt="Portada del libro">
-        <h3>${titulo}</h3>
-        <p>${descripcion}</p>
-        <p><strong>Autor:</strong> ${autor}</p>
-      `;
-
-      libroDiv.addEventListener("click", async () => {
-        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
-      });
-
-      container.appendChild(libroDiv);
-    });
+    mostrarLibros(data.items, containerId);
   }
 
   // Función para abrir el modal con detalles del libro
@@ -111,6 +82,37 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error al buscar libros:", error);
     }
+  }
+
+  // Función para mostrar los libros en la interfaz
+  function mostrarLibros(libros, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; // Limpiar el contenedor
+
+    libros.forEach(libro => {
+      const libroDiv = document.createElement("div");
+      libroDiv.classList.add("libro");
+
+      const titulo = libro.volumeInfo.title;
+      const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
+      const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
+      const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+      const infoLink = libro.volumeInfo.infoLink;
+      const bookId = libro.id;
+
+      libroDiv.innerHTML = `
+        <img src="${portada}" alt="Portada del libro">
+        <h3>${titulo}</h3>
+        <p>${descripcion}</p>
+        <p><strong>Autor:</strong> ${autor}</p>
+      `;
+
+      libroDiv.addEventListener("click", () => {
+        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
+      });
+
+      container.appendChild(libroDiv);
+    });
   }
 
   // Cargar libros al iniciar la página
