@@ -98,22 +98,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Función de búsqueda de libros
+  // Función de búsqueda de libros en Google Books
   async function buscarLibros(query) {
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
       const data = await response.json();
-
+  
       if (data.items) {
-        mostrarLibros(data.items, "novedades-container");
+        mostrarLibros(data.items, "resultados-busqueda-container");
       } else {
-        document.getElementById("novedades-container").innerHTML = "<p>No se encontraron libros.</p>";
+        document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
       }
     } catch (error) {
       console.error("Error al buscar libros:", error);
     }
-  }
+  }}
 
   // Cargar libros al iniciar la página
   async function cargarNovedades() {
