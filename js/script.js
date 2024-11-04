@@ -11,6 +11,10 @@ const firebaseConfig = {
   appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
 };
 
+
+// Clave de API para Google Books (sustituye TU_API_KEY aquí)
+const booksApiKey = "TU_API_KEY"; // Reemplaza con tu clave de Google Books API
+
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -97,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Función de búsqueda de libros
   async function buscarLibros(query) {
     try {
-      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${apiKey}`;
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
       const data = await response.json();
 
