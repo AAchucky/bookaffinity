@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Función de búsqueda de libros
   async function buscarLibros(query) {
     try {
-      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=YOUR_API_KEY`;
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM`;
       const response = await fetch(url);
       const data = await response.json();
 
