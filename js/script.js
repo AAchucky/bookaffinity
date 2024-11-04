@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error al buscar libros:", error);
     }
-  }}
+  }
 
   // Cargar libros al iniciar la página
   async function cargarNovedades() {
