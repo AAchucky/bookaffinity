@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 
 // Clave de API para Google Books (sustituye TU_API_KEY aquí)
-const booksApiKey = "AIzaSyAPkUEVaKIyM-AzsMMbU-tfU6VuKQvhNM4"; // Reemplaza con tu clave de Google Books API
+const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ"; 
 
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
