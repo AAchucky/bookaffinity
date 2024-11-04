@@ -3,16 +3,16 @@ import { getFirestore, collection, query, where, getDocs } from "https://www.gst
 
 // Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
-  projectId: "YOUR_FIREBASE_PROJECT_ID",
-  storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
-  appId: "YOUR_FIREBASE_APP_ID"
+  apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
+  authDomain: "prueba-d332d.firebaseapp.com",
+  projectId: "prueba-d332d",
+  storageBucket: "prueba-d332d.appspot.com",
+  messagingSenderId: "249157786292",
+  appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
 };
 
 // Clave de API para Google Books
-const booksApiKey = "YOUR_GOOGLE_BOOKS_API_KEY";
+const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ";
 
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
@@ -20,8 +20,12 @@ const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Función para mostrar libros en un contenedor específico
-  async function mostrarLibros(libros, containerId) {
+  // Función para cargar libros en un contenedor específico
+  async function cargarLibros(url, containerId) {
+    const response = await fetch(url);
+    const data = await response.json();
+    const libros = data.items;
+
     const container = document.getElementById(containerId);
     container.innerHTML = ""; // Limpiar contenedor
 
