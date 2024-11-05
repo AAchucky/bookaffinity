@@ -64,7 +64,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("book-modal").style.display = "flex";
+
+    document.getElementById("add-to-biblioteca").addEventListener("click", () => {
+    const bookId = document.getElementById("modal").getAttribute("data-book-id");
+    guardarEnBiblioteca(bookId);
+    });
   }
+
+  async function cargarBiblioteca() {
+  const user = auth.currentUser;
+  if (user) {
+    const bibliotecaRef = doc(db, "Biblioteca", user.uid);
+    const bibliotecaSnapshot = await getDoc(bibliotecaRef);
+
+    if (bibliotecaSnapshot.exists()) {
+      const biblioteca = bibliotecaSnapshot.data().libros || [];
+      const container = document.getElementById("biblioteca-container");
+
+      // Limpiar el contenedor
+      container.innerHTML = "";
+
+      biblioteca.forEach(async (bookId) => {
+        // Llama a la API de Google Books para obtener la información del libro
+        const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
+        const data = await response.json();
+
+        const libroDiv = document.createElement("div");
+        libroDiv.classList.add("libro");
+
+        const titulo = data.volumeInfo.title;
+        const autor = data.volumeInfo.authors ? data.volumeInfo.authors.join(", ") : "Autor desconocido";
+        const portada = data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "https://books.google.com/googlebooks/images/no_cover_thumb.gif";
+        const descripcion = data.volumeInfo.description || "Descripción no disponible";
+
+        libroDiv.innerHTML = `
+          <img src="${portada}" alt="Portada del libro">
+          <h3>${titulo}</h3>
+          <p><strong>Autor:</strong> ${autor}</p>
+          <p>${descripcion}</p>
+        `;
+        container.appendChild(libroDiv);
+      });
+    }
+  } else {
+    alert("Inicia sesión para ver tus favoritos.");
+  }
+}
 
   async function buscarLibros(query) {
       try {
@@ -150,8 +195,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  async function guardarEnBiblioteca(bookId) {
+  const user = auth.currentUser;
+  if (user) {
+    const bibliotecaRef = doc(db, "Biblioteca", user.uid);
+
+    try {
+      await updateDoc(bibliotecaRef, {
+        libros: arrayUnion(bookId) // Agrega el ID del libro al array
+      });
+      console.log("Libro añadido a Mi Biblioteca");
+      alert("Libro añadido a Mi Biblioteca.");
+    } catch (error) {
+      console.error("Error al añadir a Mi Biblioteca: ", error);
+    }
+  } else {
+    alert("Inicia sesión para guardar libros en tu Biblioteca.");
+    }
+  }
+  
   cargarNovedades();
   cargarRecomendaciones();
+  cargarBiblioteca();
 
   const searchButton = document.getElementById("search-button");
   searchButton.addEventListener("click", () => {
