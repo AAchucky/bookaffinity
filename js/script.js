@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarLibros(data.items, containerId);
   }
 
-  // Función para abrir el modal con detalles del libro
   async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
     document.getElementById("modal-title").innerText = titulo;
     document.getElementById("modal-author").innerText = autor;
@@ -67,15 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("book-modal").style.display = "flex";
   }
 
-  // Función de búsqueda de libros en Google Books
   async function buscarLibros(query) {
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
       const data = await response.json();
-  
+
       if (data.items) {
         mostrarLibros(data.items, "resultados-busqueda-container");
+        gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-busq", "btn-right-busq");
       } else {
         document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
       }
@@ -84,10 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para mostrar los libros en la interfaz
   function mostrarLibros(libros, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ""; // Limpiar el contenedor
+    container.innerHTML = "";
 
     libros.forEach(libro => {
       const libroDiv = document.createElement("div");
@@ -115,15 +113,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cargar libros al iniciar la página
   async function cargarNovedades() {
     const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`;
     cargarLibros(url, "novedades-container");
+    gestionarDesplazamientoLateral("novedades-container", "btn-left", "btn-right");
   }
 
   async function cargarRecomendaciones() {
     const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`;
     cargarLibros(url, "recomendaciones-container");
+    gestionarDesplazamientoLateral("recomendaciones-container", "btn-left-recomendaciones", "btn-right-recomendaciones");
+  }
+
+  function gestionarDesplazamientoLateral(containerId, leftBtnId, rightBtnId) {
+    const container = document.getElementById(containerId);
+    const leftBtn = document.getElementById(leftBtnId);
+    const rightBtn = document.getElementById(rightBtnId);
+
+    leftBtn.style.display = "block";
+    rightBtn.style.display = "block";
+    leftBtn.addEventListener("click", () => {
+      container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
+    });
+    rightBtn.addEventListener("click", () => {
+      container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
+    });
   }
 
   cargarNovedades();
@@ -139,42 +153,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const containers = [
-    { container: document.getElementById('novedades-container'), leftBtn: document.getElementById('btn-left'), rightBtn: document.getElementById('btn-right') },
-    { container: document.getElementById('recomendaciones-container'), leftBtn: document.getElementById('btn-left-recomendaciones'), rightBtn: document.getElementById('btn-right-recomendaciones') }
-  ];
-
-  containers.forEach(({ container, leftBtn, rightBtn }) => {
-    leftBtn.addEventListener('click', () => {
-      container.scrollBy({
-        top: 0,
-        left: -300,
-        behavior: 'smooth'
-      });
-    });
-
-    rightBtn.addEventListener('click', () => {
-      container.scrollBy({
-        top: 0,
-        left: 300,
-        behavior: 'smooth'
-      });
-    });
-  });
-
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("book-modal").style.display = "none";
   });
 
   function updateStarRating(rating) {
     const starsElement = document.getElementById('star-rating');
-    starsElement.innerHTML = ''; // Limpiar contenido previo
+    starsElement.innerHTML = '';
 
     if (rating === 'N/A' || rating === null || rating === undefined) {
       for (let i = 0; i < 10; i++) {
         const star = document.createElement('span');
         star.className = 'star';
-        star.innerHTML = '&#9734;'; // Estrella vacía
+        star.innerHTML = '&#9734;';
         starsElement.appendChild(star);
       }
       return;
