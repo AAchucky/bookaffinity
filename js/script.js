@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
           if (data.items) {
               mostrarLibros(data.items, "resultados-busqueda-container");
+              gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-busq", "btn-right-busq");
               // Mostrar la sección de resultados de búsqueda solo si hay resultados
               searchSection.style.display = "flex";
               searchTitle.style.display = "block";
