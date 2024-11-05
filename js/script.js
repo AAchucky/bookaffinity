@@ -1,6 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"; 
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -18,20 +17,122 @@ const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ";
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Verificar el estado de autenticación
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      cargarBiblioteca(user.uid);
-    }
-  });
 
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
     const data = await response.json();
     mostrarLibros(data.items, containerId);
+  }
+
+  async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
+    document.getElementById("modal-title").innerText = titulo;
+    document.getElementById("modal-author").innerText = autor;
+    document.getElementById("modal-description").innerText = descripcion;
+    document.getElementById("modal-image").src = portada;
+    document.getElementById("modal-link").href = infoLink;
+
+    document.getElementById("modal-review-link").href = `agregarReseña.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+
+    const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
+    const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+
+    let averageRating = 0;
+    if (reviews.length > 0) {
+      const totalScore = reviews.reduce((sum, review) => sum + review.puntuacion, 0);
+      averageRating = (totalScore / reviews.length).toFixed(1);
+      document.getElementById("average-rating").innerText = averageRating;
+    } else {
+      document.getElementById("average-rating").innerText = "N/A";
+    }
+
+    updateStarRating(averageRating);
+
+    const voteCounts = Array(10).fill(0);
+    if (reviews && reviews.length > 0) {
+      reviews.forEach(review => voteCounts[review.puntuacion - 1]++);
+    }
+
+    const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
+    const totalVotesElement = document.getElementById("total-votes");
+    if (totalVotesElement) {
+      totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
+    } else {
+      console.error('Elemento con ID total-votes no encontrado');
+    }
+
+    document.getElementById("book-modal").style.display = "flex";
+
+    // Añadir la funcionalidad para el enlace "Agregar a Mi Biblioteca"
+    document.getElementById("modal-add-to-library-link").onclick = async (event) => {
+      event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+      await guardarEnBiblioteca(bookId); // Llamar a la función para guardar el libro
+    };
+  }
+
+  async function cargarBiblioteca() {
+    const user = auth.currentUser;
+    if (user) {
+      const bibliotecaRef = doc(db, "Biblioteca", user.uid);
+      const bibliotecaSnapshot = await getDoc(bibliotecaRef);
+
+      if (bibliotecaSnapshot.exists()) {
+        const biblioteca = bibliotecaSnapshot.data().libros || [];
+        const container = document.getElementById("biblioteca-container");
+
+        // Limpiar el contenedor
+        container.innerHTML = "";
+
+        biblioteca.forEach(async (bookId) => {
+          const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
+          const data = await response.json();
+
+          const libroDiv = document.createElement("div");
+          libroDiv.classList.add("libro");
+
+          const titulo = data.volumeInfo.title;
+          const autor = data.volumeInfo.authors ? data.volumeInfo.authors.join(", ") : "Autor desconocido";
+          const portada = data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "https://books.google.com/googlebooks/images/no_cover_thumb.gif";
+          const descripcion = data.volumeInfo.description || "Descripción no disponible";
+
+          libroDiv.innerHTML = `
+            <img src="${portada}" alt="Portada del libro">
+            <h3>${titulo}</h3>
+            <p><strong>Autor:</strong> ${autor}</p>
+            <p>${descripcion}</p>
+          `;
+          container.appendChild(libroDiv);
+        });
+      }
+    } else {
+      alert("Inicia sesión para ver tus favoritos.");
+    }
+  }
+
+  async function buscarLibros(query) {
+    try {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const searchSection = document.getElementById("search-results-section");
+      const searchTitle = document.getElementById("search-results-title");
+
+      if (data.items) {
+        mostrarLibros(data.items, "resultados-busqueda-container");
+        gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-busq", "btn-right-busq");
+        searchSection.style.display = "flex";
+        searchTitle.style.display = "block";
+      } else {
+        searchSection.style.display = "none";
+        searchTitle.style.display = "none";
+        document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
+      }
+    } catch (error) {
+      console.error("Error al buscar libros:", error);
+    }
   }
 
   function mostrarLibros(libros, containerId) {
@@ -56,105 +157,41 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><strong>Autor:</strong> ${autor}</p>
       `;
 
-      libroDiv.addEventListener("click", () => abrirModal(titulo, autor, descripcion, portada, infoLink, bookId));
+      libroDiv.addEventListener("click", () => {
+        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
+      });
+
       container.appendChild(libroDiv);
     });
-
-    gestionarDesplazamientoLateral(containerId);
   }
 
-  async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
-    document.getElementById("modal-title").innerText = titulo;
-    document.getElementById("modal-author").innerText = autor;
-    document.getElementById("modal-description").innerText = descripcion;
-    document.getElementById("modal-image").src = portada;
-    document.getElementById("modal-link").href = infoLink;
-
-    const addToLibraryLink = document.getElementById("modal-add-to-biblioteca-link");
-    addToLibraryLink.setAttribute("data-book-id", bookId);
-    addToLibraryLink.onclick = (event) => {
-      event.preventDefault();
-      guardarEnBiblioteca(bookId);
-    };
-
-    document.getElementById("book-modal").style.display = "flex";
+  async function cargarNovedades() {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`;
+    cargarLibros(url, "novedades-container");
+    gestionarDesplazamientoLateral("novedades-container", "btn-left", "btn-right");
   }
 
-  async function guardarEnBiblioteca(bookId) {
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Inicia sesión para guardar libros en tu Biblioteca.");
-      return;
-    }
-
-    const bibliotecaRef = doc(db, "Biblioteca", user.uid);
-    try {
-      await updateDoc(bibliotecaRef, { libros: arrayUnion(bookId) });
-      alert("Libro añadido a tu Biblioteca.");
-    } catch (error) {
-      console.error("Error al añadir a la biblioteca: ", error);
-    }
+  async function cargarRecomendaciones() {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`;
+    cargarLibros(url, "recomendaciones-container");
+    gestionarDesplazamientoLateral("recomendaciones-container", "btn-left-recomendaciones", "btn-right-recomendaciones");
   }
 
-  async function cargarBiblioteca(userId) {
-    const bibliotecaRef = doc(db, "Biblioteca", userId);
-    const bibliotecaSnapshot = await getDoc(bibliotecaRef);
-
-    const container = document.getElementById("biblioteca-container");
-    container.innerHTML = ""; 
-
-    if (bibliotecaSnapshot.exists()) {
-      const biblioteca = bibliotecaSnapshot.data().libros || [];
-      biblioteca.forEach(async (bookId) => {
-        const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}?key=${booksApiKey}`);
-        const data = await response.json();
-        mostrarLibros([data], "biblioteca-container");
-      });
-    }
-  }
-
-  async function buscarLibros(query) {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const searchSection = document.getElementById("search-results-section");
-
-    if (data.items) {
-      mostrarLibros(data.items, "resultados-busqueda-container");
-      searchSection.style.display = "flex";
-    } else {
-      searchSection.style.display = "none";
-      document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
-    }
-  }
-
-  function gestionarDesplazamientoLateral(containerId) {
+  function gestionarDesplazamientoLateral(containerId, leftBtnId, rightBtnId) {
     const container = document.getElementById(containerId);
-    const leftBtn = document.getElementById(`btn-left-${containerId}`);
-    const rightBtn = document.getElementById(`btn-right-${containerId}`);
+    const leftBtn = document.getElementById(leftBtnId);
+    const rightBtn = document.getElementById(rightBtnId);
 
-    if (leftBtn && rightBtn) { // Verificar si existen los botones
-      leftBtn.addEventListener("click", () => {
-        container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
-      });
-      rightBtn.addEventListener("click", () => {
-        container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
-      });
-    } else {
-      console.error(`Botones de desplazamiento no encontrados para ${containerId}`);
-    }
+    leftBtn.addEventListener("click", () => {
+      container.scrollLeft -= 200; // Ajustar desplazamiento según se necesite
+    });
+
+    rightBtn.addEventListener("click", () => {
+      container.scrollLeft += 200; // Ajustar desplazamiento según se necesite
+    });
   }
 
-  cargarLibros(`https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`, "novedades-container");
-  cargarLibros(`https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`, "recomendaciones-container");
-
-  document.getElementById("search-button").addEventListener("click", () => {
-    const query = document.getElementById("search-input").value.trim();
-    if (query) buscarLibros(query);
-    else alert("Por favor, ingresa un término de búsqueda.");
-  });
-
-  document.getElementById("close-modal").addEventListener("click", () => {
-    document.getElementById("book-modal").style.display = "none";
-  });
+  // Llamadas a funciones para cargar novedades y recomendaciones
+  cargarNovedades();
+  cargarRecomendaciones();
 });
