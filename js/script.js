@@ -21,6 +21,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Verificar el estado de autenticación
   onAuthStateChanged(auth, (user) => {
     if (user) {
       cargarBiblioteca(user.uid);
@@ -59,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(libroDiv);
     });
 
-    gestionarDesplazamientoLateral(containerId, `btn-left-${containerId}`, `btn-right-${containerId}`);
+    gestionarDesplazamientoLateral(containerId);
   }
 
   async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
@@ -69,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-link").href = infoLink;
 
-    // Configurar el enlace para agregar a biblioteca
     const addToLibraryLink = document.getElementById("modal-add-to-biblioteca-link");
     addToLibraryLink.setAttribute("data-book-id", bookId);
     addToLibraryLink.onclick = (event) => {
@@ -128,17 +128,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function gestionarDesplazamientoLateral(containerId, leftBtnId, rightBtnId) {
+  function gestionarDesplazamientoLateral(containerId) {
     const container = document.getElementById(containerId);
-    const leftBtn = document.getElementById(leftBtnId);
-    const rightBtn = document.getElementById(rightBtnId);
+    const leftBtn = document.getElementById(`btn-left-${containerId}`);
+    const rightBtn = document.getElementById(`btn-right-${containerId}`);
 
-    leftBtn.addEventListener("click", () => {
-      container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
-    });
-    rightBtn.addEventListener("click", () => {
-      container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
-    });
+    if (leftBtn && rightBtn) { // Verificar si existen los botones
+      leftBtn.addEventListener("click", () => {
+        container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
+      });
+      rightBtn.addEventListener("click", () => {
+        container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
+      });
+    } else {
+      console.error(`Botones de desplazamiento no encontrados para ${containerId}`);
+    }
   }
 
   cargarLibros(`https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`, "novedades-container");
@@ -153,38 +157,4 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("book-modal").style.display = "none";
   });
-
-  function updateStarRating(rating) {
-    const starsElement = document.getElementById('star-rating');
-    starsElement.innerHTML = '';
-
-    if (rating === 'N/A' || rating === null || rating === undefined) {
-      for (let i = 0; i < 10; i++) {
-        const star = document.createElement('span');
-        star.className = 'star';
-        star.innerHTML = '&#9734;';
-        starsElement.appendChild(star);
-      }
-      return;
-    }
-
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < 10; i++) {
-      const star = document.createElement('span');
-      star.className = 'star';
-
-      if (i < fullStars) {
-        star.classList.add('filled');
-        star.innerHTML = '&#9733;';
-      } else if (i === fullStars && halfStar) {
-        star.innerHTML = '&#9734;';
-      } else {
-        star.innerHTML = '&#9734;';
-      }
-
-      starsElement.appendChild(star);
-    }
-  }
 });
