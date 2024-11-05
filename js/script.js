@@ -4,13 +4,16 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 
 // Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
+  apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
   authDomain: "prueba-d332d.firebaseapp.com",
   projectId: "prueba-d332d",
   storageBucket: "prueba-d332d.appspot.com",
   messagingSenderId: "249157786292",
   appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
 };
+
+// Clave de API para Google Books
+const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ";
 
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
