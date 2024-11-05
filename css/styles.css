@@ -279,3 +279,11 @@
 	  color: #888;
 	  margin-bottom: 10px;
 	}
+
+	#search-results-section {
+	  display: none;
+	  flex-direction: row;
+	  align-items: center;
+	  gap: 10px;
+	  transition: opacity 0.5s ease-in-out;
+	}
