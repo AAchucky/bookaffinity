@@ -33,7 +33,26 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-link").href = infoLink;
 
-    document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    // Obtén el enlace del modal
+    document.getElementById("modal-review-link").addEventListener("click", function(event) {
+      // Verifica si el usuario está logueado
+      if (!auth.currentUser) {
+        // Si el usuario no está autenticado, muestra un mensaje de advertencia
+        alert("¡Debes iniciar sesión para agregar una reseña!");
+    
+        // Evita la redirección haciendo un `preventDefault`
+        event.preventDefault();
+        
+        // Opcional: Redirige al usuario a la página de login si lo deseas
+        // window.location.href = "login.html"; // Si prefieres redirigir al login
+      } else {
+        // Si el usuario está autenticado, se asigna la URL del enlace
+        const bookId = getBookId();  // Obtiene el ID del libro
+        const titulo = getBookTitle(); // Título del libro
+        document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+      }
+    });
+
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
 
     const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
