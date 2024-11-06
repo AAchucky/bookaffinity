@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modalReviewLink = document.getElementById("modal-review-link");
     // Asignar el href de forma predeterminada
+    modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
     // Agregar el event listener para cuando el usuario haga clic
     modalReviewLink.addEventListener("click", function(event) {
       // Verifica si el usuario está logueado
