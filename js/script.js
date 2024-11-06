@@ -23,6 +23,19 @@ const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    // Comprobar el estado de autenticación
+  onAuthStateChanged(auth, (user) => {
+    const userNameElement = document.getElementById("user-name");
+    
+    if (user) {
+      // Si el usuario está autenticado, muestra su nombre
+      userNameElement.innerText = `Usuario: ${user.displayName || 'No disponible'}`;
+    } else {
+      // Si el usuario no está autenticado, muestra "invitado"
+      userNameElement.innerText = `Usuario: Invitado`;
+    }
+  });
+
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
     const data = await response.json();
