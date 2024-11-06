@@ -36,8 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-link").href = infoLink;
 
-    // Obtén el enlace del modal
-    document.getElementById("modal-review-link").addEventListener("click", function(event) {
+    const modalReviewLink = document.getElementById("modal-review-link");
+    // Asignar el href de forma predeterminada
+    // Agregar el event listener para cuando el usuario haga clic
+    modalReviewLink.addEventListener("click", function(event) {
       // Verifica si el usuario está logueado
       if (!auth.currentUser) {
         // Si el usuario no está autenticado, muestra un mensaje de advertencia
@@ -45,12 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
         // Evita la redirección haciendo un `preventDefault`
         event.preventDefault();
-        
+    
         // Opcional: Redirige al usuario a la página de login si lo deseas
         // window.location.href = "login.html"; // Si prefieres redirigir al login
-      } else {
-        // Si el usuario está autenticado, se asigna la URL del enlace
-        document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
       }
     });
 
