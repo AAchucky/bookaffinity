@@ -27,20 +27,19 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     const userNameElement = document.getElementById("user-name");
 
-    // Si hay un usuario logueado
     if (user) {
       try {
         // Obtener el documento de usuario desde la colección de Firestore
-        const userDocRef = doc(db, "usuarios", user.uid); // Suponemos que usas el UID de Firebase Auth como ID del documento
+        const userDocRef = doc(db, "Usuarios", user.uid); // Usamos UID de Firebase Auth
         const userDoc = await getDoc(userDocRef);
 
-        // Comprobar si el documento existe
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          // Usamos el campo 'nombre' del documento en Firestore
-          userNameElement.innerText = `Usuario: ${userData.nombre || user.email}`;
+          // Mostrar el nombre si está disponible, o el email como respaldo
+          const userName = userData.nombre || user.email;
+          userNameElement.innerText = `Usuario: ${userName}`;
         } else {
-          // Si no se encuentra el documento, se usa el email del usuario
+          // Si no existe el documento, usar el email como respaldo
           userNameElement.innerText = `Usuario: ${user.email}`;
         }
       } catch (error) {
@@ -48,8 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
         userNameElement.innerText = `Usuario: ${user.email}`;
       }
     } else {
-      // Si no hay usuario logueado, se muestra como invitado
-      userNameElement.innerText = "Usuario: invitado";
+      // Si no hay usuario logueado, mostrar "invitado"
+      userNameElement.innerText = "Usuario: Invitado";
     }
   });
 
