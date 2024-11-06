@@ -129,7 +129,7 @@
       if (tituloLibro) {
         try {
           await addDoc(collection(db, "Resenas"), {
-            libro_id: tituloLibro, // Guarda el título del libro como referencia
+            libro_id: params.get('bookId'), // Guarda el título del libro como referencia
             puntuacion: Number(puntuacion),
             texto: texto,
             usuario_id: auth.currentUser.uid // ID del usuario que agrega la reseña
