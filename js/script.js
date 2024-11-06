@@ -126,10 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function gestionarDesplazamientoLateral(containerId, leftBtnId, rightBtnId) {
-    const container = document.getElementById(containerId);
-    const leftBtn = document.getElementById(leftBtnId);
-    const rightBtn = document.getElementById(rightBtnId);
+  const container = document.getElementById(containerId);
+  const leftBtn = document.getElementById(leftBtnId);
+  const rightBtn = document.getElementById(rightBtnId);
 
+  // Verificar si los botones existen antes de manipular su estilo
+  if (leftBtn && rightBtn) {
     leftBtn.style.display = "block";
     rightBtn.style.display = "block";
     leftBtn.addEventListener("click", () => {
@@ -138,7 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
     rightBtn.addEventListener("click", () => {
       container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
     });
+  } else {
+    console.error(`Botones con IDs ${leftBtnId} y ${rightBtnId} no encontrados.`);
   }
+}
+
 
   cargarNovedades();
   cargarRecomendaciones();
