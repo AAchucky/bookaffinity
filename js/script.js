@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (data.items) {
         mostrarLibros(data.items, "resultados-busqueda-container");
-        gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-busq", "btn-right-busq");
+        gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-resultados-busqueda", "btn-right-resultados-busqueda");
       } else {
         document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
       }
