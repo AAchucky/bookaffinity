@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"; 
-import { getFirestore, collection, query, where, getDocs, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -64,51 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("book-modal").style.display = "flex";
-
-    // Añadir la funcionalidad para el enlace "Agregar a Mi Biblioteca"
-    document.getElementById("modal-add-to-library-link").onclick = async (event) => {
-      event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
-      await guardarEnBiblioteca(bookId); // Llamar a la función para guardar el libro
-    };
-  }
-
-  async function cargarBiblioteca() {
-    const user = auth.currentUser;
-    if (user) {
-      const bibliotecaRef = doc(db, "Biblioteca", user.uid);
-      const bibliotecaSnapshot = await getDoc(bibliotecaRef);
-
-      if (bibliotecaSnapshot.exists()) {
-        const biblioteca = bibliotecaSnapshot.data().libros || [];
-        const container = document.getElementById("biblioteca-container");
-
-        // Limpiar el contenedor
-        container.innerHTML = "";
-
-        biblioteca.forEach(async (bookId) => {
-          const response = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
-          const data = await response.json();
-
-          const libroDiv = document.createElement("div");
-          libroDiv.classList.add("libro");
-
-          const titulo = data.volumeInfo.title;
-          const autor = data.volumeInfo.authors ? data.volumeInfo.authors.join(", ") : "Autor desconocido";
-          const portada = data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : "https://books.google.com/googlebooks/images/no_cover_thumb.gif";
-          const descripcion = data.volumeInfo.description || "Descripción no disponible";
-
-          libroDiv.innerHTML = `
-            <img src="${portada}" alt="Portada del libro">
-            <h3>${titulo}</h3>
-            <p><strong>Autor:</strong> ${autor}</p>
-            <p>${descripcion}</p>
-          `;
-          container.appendChild(libroDiv);
-        });
-      }
-    } else {
-      alert("Inicia sesión para ver tus favoritos.");
-    }
   }
 
   async function buscarLibros(query) {
@@ -117,17 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(url);
       const data = await response.json();
 
-      const searchSection = document.getElementById("search-results-section");
-      const searchTitle = document.getElementById("search-results-title");
-
       if (data.items) {
         mostrarLibros(data.items, "resultados-busqueda-container");
         gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-busq", "btn-right-busq");
-        searchSection.style.display = "flex";
-        searchTitle.style.display = "block";
       } else {
-        searchSection.style.display = "none";
-        searchTitle.style.display = "none";
         document.getElementById("resultados-busqueda-container").innerHTML = "<p>No se encontraron libros.</p>";
       }
     } catch (error) {
@@ -182,16 +130,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const leftBtn = document.getElementById(leftBtnId);
     const rightBtn = document.getElementById(rightBtnId);
 
+    leftBtn.style.display = "block";
+    rightBtn.style.display = "block";
     leftBtn.addEventListener("click", () => {
-      container.scrollLeft -= 200; // Ajustar desplazamiento según se necesite
+      container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
     });
-
     rightBtn.addEventListener("click", () => {
-      container.scrollLeft += 200; // Ajustar desplazamiento según se necesite
+      container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
     });
   }
 
-  // Llamadas a funciones para cargar novedades y recomendaciones
   cargarNovedades();
   cargarRecomendaciones();
+
+  const searchButton = document.getElementById("search-button");
+  searchButton.addEventListener("click", () => {
+    const query = document.getElementById("search-input").value.trim();
+    if (query) {
+      buscarLibros(query);
+    } else {
+      alert("Por favor, ingresa un término de búsqueda.");
+    }
+  });
+
+  document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("book-modal").style.display = "none";
+  });
+
+  function updateStarRating(rating) {
+    const starsElement = document.getElementById('star-rating');
+    starsElement.innerHTML = '';
+
+    if (rating === 'N/A' || rating === null || rating === undefined) {
+      for (let i = 0; i < 10; i++) {
+        const star = document.createElement('span');
+        star.className = 'star';
+        star.innerHTML = '&#9734;';
+        starsElement.appendChild(star);
+      }
+      return;
+    }
+
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < 10; i++) {
+      const star = document.createElement('span');
+      star.className = 'star';
+
+      if (i < fullStars) {
+        star.classList.add('filled');
+        star.innerHTML = '&#9733;';
+      } else if (i === fullStars && halfStar) {
+        star.innerHTML = '&#9734;';
+      } else {
+        star.innerHTML = '&#9734;';
+      }
+
+      starsElement.appendChild(star);
+    }
+  }
 });
