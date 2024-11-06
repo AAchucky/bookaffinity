@@ -106,9 +106,11 @@
     function getQueryParams() {
       const params = new URLSearchParams(window.location.search);
       return {
-        tituloLibro: params.get('titulo'), // Obtener el título del libro
+        bookId: params.get('bookId'), // Agrega bookId aquí
+        tituloLibro: params.get('titulo') // También obtén el título para mostrarlo en la interfaz
       };
     }
+
 
     // Al cargar la página
     window.onload = function() {
