@@ -205,14 +205,18 @@
       window.location.href = "muestraLibros.html";
     });
 
-    document.getElementById("agregar-reseña-button").addEventListener("click", () => {
-      const libroTitulo = new URLSearchParams(window.location.search).get('titulo');
-      if (libroTitulo) {
-        window.location.href = `agregarResena.html?titulo=${encodeURIComponent(libroTitulo)}`;
+      document.getElementById("agregar-reseña-button").addEventListener("click", () => {
+      const params = new URLSearchParams(window.location.search);
+      const libroTitulo = params.get('titulo');
+      const bookId = params.get('bookId'); // Obtén el bookId de la URL actual
+      
+      if (libroTitulo && bookId) {
+        window.location.href = `agregarResena.html?titulo=${encodeURIComponent(libroTitulo)}&bookId=${encodeURIComponent(bookId)}`;
       } else {
-        alert("No se ha proporcionado un título de libro.");
+        alert("No se han proporcionado todos los parámetros necesarios.");
       }
     });
+
 
     document.getElementById("scroll-top-button").addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
