@@ -206,6 +206,12 @@
     });
 
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
+      // Verifica si el usuario está logado
+      if (!auth.currentUser) {
+        // Si el usuario no está autenticado, muestra un mensaje
+        alert("¡Debes iniciar sesión para agregar una reseña!");
+      } else {
+
       const params = new URLSearchParams(window.location.search);
       const libroTitulo = params.get('titulo');
       const bookId = params.get('bookId'); // Obtén el bookId de la URL actual
