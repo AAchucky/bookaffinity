@@ -127,14 +127,17 @@
     const { tituloLibro, bookId } = getQueryParams(); // Obtén bookId además de tituloLibro
     const puntuacion = document.getElementById("review-rating").value;
     const texto = document.getElementById("review-text").value;
-  
+
+    // Verifica si hay un usuario autenticado
+    const usuarioId = auth.currentUser ? auth.currentUser.uid : "invitado"; // Si no hay usuario, usa "invitado"
+
     if (bookId) { // Cambia la validación a bookId en lugar de tituloLibro
       try {
         await addDoc(collection(db, "Resenas"), {
           libro_id: bookId, // Usa bookId en lugar de tituloLibro para libro_id
           puntuacion: Number(puntuacion),
           texto: texto,
-          usuario_id: auth.currentUser.uid, // ID del usuario que agrega la reseña
+          usuario_id: usuarioId, // ID del usuario que agrega la reseña
           fecha: new Date() // Incluye la fecha actual
         });
         // Redirigir a la página de reseñas del libro
