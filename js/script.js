@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function buscarLibros(query) {
+    console.log(`Buscando libros para: ${query}`); // Mensaje de prueba
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
