@@ -135,7 +135,7 @@
             usuario_id: auth.currentUser.uid // ID del usuario que agrega la reseña
           });
           // Redirigir a la página de reseñas del libro
-          window.location.href = `muestraReseñas.html?titulo=${encodeURIComponent(tituloLibro)}`;
+          window.location.href = `muestraResenas.html?titulo=${encodeURIComponent(tituloLibro)}`;
         } catch (error) {
           console.error("Error al agregar la reseña:", error);
         }
@@ -149,7 +149,7 @@
       const { tituloLibro } = getQueryParams();
       if (tituloLibro) {
         // Redirigir a la página de reseñas del libro
-        window.location.href = `muestraReseñas.html?titulo=${encodeURIComponent(tituloLibro)}`;
+        window.location.href = `muestraResenas.html?titulo=${encodeURIComponent(tituloLibro)}`;
       }
     });
 
