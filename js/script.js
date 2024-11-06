@@ -23,34 +23,16 @@ const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
-// Verificar el estado de autenticación al cargar la página
-  onAuthStateChanged(auth, async (user) => {
-    const userNameElement = document.getElementById("user-name");
-
-    if (user) {
-      try {
-        // Obtener el documento de usuario desde la colección de Firestore
-        const userDocRef = doc(db, "Usuarios", user.uid); // Usamos UID de Firebase Auth
-        const userDoc = await getDoc(userDocRef);
-
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          // Mostrar el nombre si está disponible, o el email como respaldo
-          const userName = userData.nombre || user.email;
-          userNameElement.innerText = `Usuario: ${userName}`;
-        } else {
-          // Si no existe el documento, usar el email como respaldo
-          userNameElement.innerText = `Usuario: ${user.email}`;
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario:", error);
-        userNameElement.innerText = `Usuario: ${user.email}`;
-      }
-    } else {
-      // Si no hay usuario logueado, mostrar "invitado"
-      userNameElement.innerText = "Usuario: Invitado";
-    }
-  });
+// Verificar el estado de autenticación cuando se carga la página
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Si el usuario ya está autenticado, redirigirlo a otra página
+    window.location.href = "html/muestraLibros.html";  // Cambia la URL según lo que necesites
+  } else {
+    // Si no hay usuario autenticado, mostrar la página de login
+    console.log("No hay usuario autenticado.");
+  }
+});
 
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
