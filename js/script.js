@@ -42,12 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (auth.currentUser) {
      // Si está logueado, asignamos el enlace
         modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+        modalReviewLink.style.pointerEvents = "auto"; // Habilitar enlace
       } else {
-        // Si no está logueado, deshabilitamos el enlace y mostramos una alerta
-        modalReviewLink.href = "#"; // Evita que el enlace navegue
+        modalReviewLink.href = "#";
+        modalReviewLink.style.pointerEvents = "none"; // Deshabilitar enlace
         modalReviewLink.addEventListener("click", function(event) {
-          alert("¡Debes iniciar sesión para agregar una reseña!");
-          event.preventDefault(); // Asegura que no se navegue
+        alert("¡Debes iniciar sesión para agregar una reseña!");
+        event.preventDefault(); // Prevenir la navegación
         });
       }
 
