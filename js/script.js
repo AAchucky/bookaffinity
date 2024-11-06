@@ -23,16 +23,33 @@ const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Comprobar el estado de autenticación
-  onAuthStateChanged(auth, (user) => {
+// Verificar el estado de autenticación al cargar la página
+  onAuthStateChanged(auth, async (user) => {
     const userNameElement = document.getElementById("user-name");
-    
+
+    // Si hay un usuario logueado
     if (user) {
-      // Si el usuario está autenticado, muestra su nombre
-      userNameElement.innerText = `Usuario: ${user.displayName || 'No disponible'}`;
+      try {
+        // Obtener el documento de usuario desde la colección de Firestore
+        const userDocRef = doc(db, "usuarios", user.uid); // Suponemos que usas el UID de Firebase Auth como ID del documento
+        const userDoc = await getDoc(userDocRef);
+
+        // Comprobar si el documento existe
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Usamos el campo 'nombre' del documento en Firestore
+          userNameElement.innerText = `Usuario: ${userData.nombre || user.email}`;
+        } else {
+          // Si no se encuentra el documento, se usa el email del usuario
+          userNameElement.innerText = `Usuario: ${user.email}`;
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos del usuario:", error);
+        userNameElement.innerText = `Usuario: ${user.email}`;
+      }
     } else {
-      // Si el usuario no está autenticado, muestra "invitado"
-      userNameElement.innerText = `Usuario: Invitado`;
+      // Si no hay usuario logueado, se muestra como invitado
+      userNameElement.innerText = "Usuario: invitado";
     }
   });
 
