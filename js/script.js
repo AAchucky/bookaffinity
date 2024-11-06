@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const searchButton = document.getElementById("search-button");
   searchButton.addEventListener("click", () => {
+    console.log("Botón de búsqueda presionado"); // Mensaje de prueba
     const query = document.getElementById("search-input").value.trim();
     if (query) {
       buscarLibros(query);
