@@ -50,8 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // window.location.href = "login.html"; // Si prefieres redirigir al login
       } else {
         // Si el usuario está autenticado, se asigna la URL del enlace
-        const bookId = getBookId();  // Obtiene el ID del libro
-        const titulo = getBookTitle(); // Título del libro
         document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
       }
     });
