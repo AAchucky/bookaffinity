@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
 
 // Configuración de Firebase
@@ -36,19 +36,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-link").href = infoLink;
 
-    // Primero verificamos si el usuario está logueado
     const modalReviewLink = document.getElementById("modal-review-link");
 
-    if (auth.currentUser) {
-     // Si está logueado, asignamos el enlace
+      // Verificamos el estado de autenticación
+      const user = auth.currentUser; // Revisamos el usuario autenticado
+  
+      if (user) {
+        // Si el usuario está autenticado, habilitamos el enlace
         modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
-        modalReviewLink.style.pointerEvents = "auto"; // Habilitar enlace
+        modalReviewLink.style.pointerEvents = "auto"; // Aseguramos que el enlace esté habilitado
       } else {
+        // Si no está logueado, deshabilitamos el enlace y mostramos la alerta
         modalReviewLink.href = "#";
-        modalReviewLink.style.pointerEvents = "none"; // Deshabilitar enlace
+        modalReviewLink.style.pointerEvents = "none"; // Deshabilitamos el enlace
         modalReviewLink.addEventListener("click", function(event) {
-        alert("¡Debes iniciar sesión para agregar una reseña!");
-        event.preventDefault(); // Prevenir la navegación
+          alert("¡Debes iniciar sesión para agregar una reseña!");
+          event.preventDefault(); // Prevenir la navegación
         });
       }
 
