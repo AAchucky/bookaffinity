@@ -18,7 +18,7 @@ const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ";
 // Inicializar Firebase y Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = firebase.auth(); 
+const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
 
