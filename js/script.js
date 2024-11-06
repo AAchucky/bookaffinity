@@ -36,15 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-link").href = infoLink;
 
-    document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    // Primero verificamos si el usuario está logueado
+    const modalReviewLink = document.getElementById("modal-review-link");
 
-    // Verificar si el usuario está logueado al hacer clic en el enlace de agregar reseña
-    document.getElementById("modal-review-link").addEventListener("click", function(event) {
-      if (!auth.currentUser) {
-        alert("¡Debes iniciar sesión para agregar una reseña!");
-        event.preventDefault();
+    if (auth.currentUser) {
+     // Si está logueado, asignamos el enlace
+        modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+      } else {
+        // Si no está logueado, deshabilitamos el enlace y mostramos una alerta
+        modalReviewLink.href = "#"; // Evita que el enlace navegue
+        modalReviewLink.addEventListener("click", function(event) {
+          alert("¡Debes iniciar sesión para agregar una reseña!");
+          event.preventDefault(); // Asegura que no se navegue
+        });
       }
-    });
 
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
 
