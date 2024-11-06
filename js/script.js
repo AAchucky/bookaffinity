@@ -67,13 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function buscarLibros(query) {
-    console.log(`Buscando libros para: ${query}`); // Mensaje de prueba
+    console.log(`Buscando libros para: ${query}`);
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
       const data = await response.json();
-
+      console.log("Datos recibidos de Google Books API:", data); // Log para revisar la respuesta
+      
       if (data.items) {
+        document.getElementById("search-results-title").style.display = "block"; // Mostrar título
+        document.getElementById("search-results-section").style.display = "block"; // Mostrar sección de resultados
         mostrarLibros(data.items, "resultados-busqueda-container");
         gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-resultados-busqueda", "btn-right-resultados-busqueda");
       } else {
@@ -83,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al buscar libros:", error);
     }
   }
+
 
   function mostrarLibros(libros, containerId) {
     const container = document.getElementById(containerId);
