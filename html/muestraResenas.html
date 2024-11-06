@@ -195,7 +195,7 @@
 
     document.getElementById("logout-button").addEventListener("click", () => {
       signOut(auth).then(() => {
-        window.location.href = "Prueba.html";
+        window.location.href = "muestraLibros.html";
       }).catch((error) => {
         console.error("Error al cerrar sesión:", error);
       });
@@ -208,7 +208,7 @@
     document.getElementById("agregar-reseña-button").addEventListener("click", () => {
       const libroTitulo = new URLSearchParams(window.location.search).get('titulo');
       if (libroTitulo) {
-        window.location.href = `agregarReseña.html?titulo=${encodeURIComponent(libroTitulo)}`;
+        window.location.href = `agregarResena.html?titulo=${encodeURIComponent(libroTitulo)}`;
       } else {
         alert("No se ha proporcionado un título de libro.");
       }
