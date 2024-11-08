@@ -52,8 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-
-      if (data.items) {
+      console.log("Respuesta de la API:", data); // Log de la respuesta
+  
+      if (data.items && data.items.length > 0) {
         mostrarLibros(data.items, containerId);
       } else {
         document.getElementById(containerId).innerHTML = "<p>No se encontraron libros.</p>";
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al cargar libros:", error);
     }
   }
+
 
   // Función para abrir un modal con información del libro
   function abrirModal(titulo, autor, descripcion, portada, infoLink) {
@@ -73,11 +75,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("book-modal").style.display = "flex";
   }
 
-  // Función para buscar libros con el término ingresado
   async function buscarLibros(query) {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
-    cargarLibros(url, "resultados-busqueda-container");
+    if (query) {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
+      console.log("URL de búsqueda:", url); // Log de la URL para depuración
+  
+      // Asegurarse de que los resultados sean visibles
+      document.getElementById("search-results-title").style.display = "block";
+      document.getElementById("search-results-section").style.display = "block";
+  
+      cargarLibros(url, "resultados-busqueda-container");
+    } else {
+      alert("Por favor, ingresa un término de búsqueda.");
+    }
   }
+
 
   // Función para mostrar los libros en un contenedor
   function mostrarLibros(libros, containerId) {
