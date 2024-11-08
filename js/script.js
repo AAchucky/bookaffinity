@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
       const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
       const infoLink = libro.volumeInfo.infoLink;
+      const bookId = libro.id; 
 
       libroDiv.innerHTML = `
         <img src="${portada}" alt="Portada del libro">
@@ -122,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       libroDiv.addEventListener("click", () => {
-        abrirModal(titulo, autor, descripcion, portada, infoLink);
+        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
       });
 
       container.appendChild(libroDiv);
