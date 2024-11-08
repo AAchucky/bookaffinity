@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(url);
       const data = await response.json();
       
+      console.log("Respuesta de la API:", data);  // Depuración: Mostrar la respuesta de la API
+
       if (data.items) {
         mostrarLibros(data.items, containerId);
       } else {
@@ -76,13 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Función para buscar libros con el término ingresado
   async function buscarLibros(query) {
     const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
+    
+    console.log("URL de búsqueda:", url);  // Depuración: Mostrar la URL que se está utilizando para la búsqueda
+
     cargarLibros(url, "resultados-busqueda-container");
   }
 
   // Función para mostrar los libros en un contenedor
   function mostrarLibros(libros, containerId) {
     const container = document.getElementById(containerId);
-    container.innerHTML = "";
+    container.innerHTML = "";  // Limpiar el contenedor antes de mostrar los libros
 
     libros.forEach(libro => {
       const libroDiv = document.createElement("div");
@@ -107,18 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       container.appendChild(libroDiv);
     });
-  }
-
-  // Función para cargar novedades
-  async function cargarNovedades() {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`;
-    cargarLibros(url, "novedades-container");
-  }
-
-  // Función para cargar recomendaciones
-  async function cargarRecomendaciones() {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`;
-    cargarLibros(url, "recomendaciones-container");
   }
 
   // Vincular el botón de búsqueda a la función buscarLibros
