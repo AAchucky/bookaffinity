@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // Si el usuario ya está autenticado, redirigirlo a otra página
-    window.location.href = "html/muestraLibros.html";  // Cambia la URL según lo que necesites
+    window.location.href = "./muestraLibros.html";  // Cambia la URL según lo que necesites
   } else {
     // Si no hay usuario autenticado, mostrar la página de login
     console.log("No hay usuario autenticado.");
