@@ -71,7 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-author").innerText = autor;
     document.getElementById("modal-description").innerText = descripcion;
     document.getElementById("modal-image").src = portada;
-    document.getElementById("modal-link").href = infoLink;
+    document.getElementById("modal-review-link").href = `agregarReseña.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    document.getElementById("modal-view-reviews-link").href = `muestraReseñas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
     document.getElementById("book-modal").style.display = "flex";
   }
 
