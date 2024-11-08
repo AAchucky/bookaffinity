@@ -23,7 +23,7 @@
 
     .books-container {
       display: flex;
-      overflow-x: hidden;
+      overflow-x: auto;
       scroll-behavior: smooth;
       padding: 20px 0;
       width: 100%;
