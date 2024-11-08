@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebas
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
-
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC49f2C4PSkNlecDEOpMqX4Y8-bYMp7vbM",
@@ -22,19 +21,15 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-
-// Verificar el estado de autenticación cuando se carga la página
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // Si el usuario ya está autenticado, redirigirlo a otra página
-    console.log("Redirigiendo a: " + redireccionUrl);
-    window.location.href = redireccionUrl;
-    window.location.replace = "./muestraLibros.html";  // Cambia la URL según lo que necesites
-  } else {
-    // Si no hay usuario autenticado, mostrar la página de login
-    console.log("No hay usuario autenticado.");
-  }
-});
+  
+  // Verificar el estado de autenticación cuando se carga la página
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("Usuario autenticado");
+    } else {
+      console.log("No hay usuario autenticado.");
+    }
+  });
 
   async function cargarLibros(url, containerId) {
     const response = await fetch(url);
@@ -50,26 +45,30 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("modal-link").href = infoLink;
 
     const modalReviewLink = document.getElementById("modal-review-link");
+    const user = auth.currentUser; // Revisamos el usuario autenticado
 
-      // Verificamos el estado de autenticación
-      const user = auth.currentUser; // Revisamos el usuario autenticado
-  
-      if (user) {
-        // Si el usuario está autenticado, habilitamos el enlace
-        modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
-        modalReviewLink.style.pointerEvents = "auto"; // Aseguramos que el enlace esté habilitado
-      } else {
-        // Si no está logueado, deshabilitamos el enlace y mostramos la alerta
-        modalReviewLink.href = "#";
-        modalReviewLink.style.pointerEvents = "none"; // Deshabilitamos el enlace
-        modalReviewLink.addEventListener("click", function(event) {
-          alert("¡Debes iniciar sesión para agregar una reseña!");
-          event.preventDefault(); // Prevenir la navegación
-        });
-      }
+    if (user) {
+      // Si el usuario está autenticado, habilitamos el enlace
+      modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+      modalReviewLink.style.pointerEvents = "auto";
+      modalReviewLink.removeEventListener("click", preventReviewAsGuest);
+    } else {
+      // Si no está logueado, deshabilitamos el enlace y mostramos la alerta
+      modalReviewLink.href = "#";
+      modalReviewLink.style.pointerEvents = "none";
+      modalReviewLink.addEventListener("click", preventReviewAsGuest);
+    }
 
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    mostrarResenas(bookId);
+  }
 
+  function preventReviewAsGuest(event) {
+    alert("¡Debes iniciar sesión para agregar una reseña!");
+    event.preventDefault();
+  }
+
+  async function mostrarResenas(bookId) {
     const reviewsSnapshot = await getDocs(query(collection(db, "Resenas"), where("libro_id", "==", bookId)));
     const reviews = reviewsSnapshot.docs.map(doc => doc.data());
 
@@ -83,20 +82,9 @@ onAuthStateChanged(auth, (user) => {
     }
 
     updateStarRating(averageRating);
-
-    const voteCounts = Array(10).fill(0);
-    if (reviews && reviews.length > 0) {
-      reviews.forEach(review => voteCounts[review.puntuacion - 1]++);
-    }
-
-    const totalVotes = voteCounts.reduce((a, b) => a + b, 0);
+    const totalVotes = reviews.length;
     const totalVotesElement = document.getElementById("total-votes");
-    if (totalVotesElement) {
-      totalVotesElement.innerText = `Total de Votos: ${totalVotes}`;
-    } else {
-      console.error('Elemento con ID total-votes no encontrado');
-    }
-
+    totalVotesElement ? (totalVotesElement.innerText = `Total de Votos: ${totalVotes}`) : console.error('Elemento con ID total-votes no encontrado');
     document.getElementById("book-modal").style.display = "flex";
   }
 
@@ -106,11 +94,10 @@ onAuthStateChanged(auth, (user) => {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
       const data = await response.json();
-      console.log("Datos recibidos de Google Books API:", data); // Log para revisar la respuesta
       
       if (data.items) {
-        document.getElementById("search-results-title").style.display = "block"; // Mostrar título
-        document.getElementById("search-results-section").style.display = "block"; // Mostrar sección de resultados
+        document.getElementById("search-results-title").style.display = "block";
+        document.getElementById("search-results-section").style.display = "block";
         mostrarLibros(data.items, "resultados-busqueda-container");
         gestionarDesplazamientoLateral("resultados-busqueda-container", "btn-left-resultados-busqueda", "btn-right-resultados-busqueda");
       } else {
@@ -120,7 +107,6 @@ onAuthStateChanged(auth, (user) => {
       console.error("Error al buscar libros:", error);
     }
   }
-
 
   function mostrarLibros(libros, containerId) {
     const container = document.getElementById(containerId);
@@ -165,32 +151,29 @@ onAuthStateChanged(auth, (user) => {
   }
 
   function gestionarDesplazamientoLateral(containerId, leftBtnId, rightBtnId) {
-  const container = document.getElementById(containerId);
-  const leftBtn = document.getElementById(leftBtnId);
-  const rightBtn = document.getElementById(rightBtnId);
+    const container = document.getElementById(containerId);
+    const leftBtn = document.getElementById(leftBtnId);
+    const rightBtn = document.getElementById(rightBtnId);
 
-  // Verificar si los botones existen antes de manipular su estilo
-  if (leftBtn && rightBtn) {
-    leftBtn.style.display = "block";
-    rightBtn.style.display = "block";
-    leftBtn.addEventListener("click", () => {
-      container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
-    });
-    rightBtn.addEventListener("click", () => {
-      container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
-    });
-  } else {
-    console.error(`Botones con IDs ${leftBtnId} y ${rightBtnId} no encontrados.`);
+    if (leftBtn && rightBtn) {
+      leftBtn.style.display = "block";
+      rightBtn.style.display = "block";
+      leftBtn.addEventListener("click", () => {
+        container.scrollBy({ top: 0, left: -300, behavior: "smooth" });
+      });
+      rightBtn.addEventListener("click", () => {
+        container.scrollBy({ top: 0, left: 300, behavior: "smooth" });
+      });
+    } else {
+      console.error(`Botones con IDs ${leftBtnId} y ${rightBtnId} no encontrados.`);
+    }
   }
-}
-
 
   cargarNovedades();
   cargarRecomendaciones();
 
   const searchButton = document.getElementById("search-button");
   searchButton.addEventListener("click", () => {
-    console.log("Botón de búsqueda presionado"); // Mensaje de prueba
     const query = document.getElementById("search-input").value.trim();
     if (query) {
       buscarLibros(query);
