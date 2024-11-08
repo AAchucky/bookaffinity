@@ -123,60 +123,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Vincular el botón de búsqueda a la función buscarLibros
   const searchButton = document.getElementById("search-button");
-  searchButton.addEventListener("click", () => {
-    const query = document.getElementById("search-input").value.trim();
-    if (query) {
-      buscarLibros(query);
-    } else {
-      alert("Por favor, ingresa un término de búsqueda.");
-    }
-  });
+  const searchInput = document.getElementById("search-input");
+
+  // Verificar que los elementos existen
+  if (searchButton && searchInput) {
+    console.log("Botón de búsqueda y campo de entrada cargados correctamente.");
+
+    searchButton.addEventListener("click", () => {
+      const query = searchInput.value.trim();
+      console.log("Valor de la búsqueda:", query);
+
+      if (query) {
+        buscarLibros(query);
+      } else {
+        alert("Por favor, ingresa un término de búsqueda.");
+      }
+    });
+  } else {
+    console.error("No se encontraron los elementos de búsqueda.");
+  }
 
   // Función para cerrar el modal
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("book-modal").style.display = "none";
   });
 
+  // Función para desplazar las categorías
   document.getElementById("btn-left").addEventListener("click", () => {
-  const container = document.getElementById("novedades-container");
-  container.scrollBy({ left: -200, behavior: 'smooth' }); // Desplaza hacia la izquierda
-});
+    const container = document.getElementById("novedades-container");
+    container.scrollBy({ left: -200, behavior: 'smooth' }); // Desplaza hacia la izquierda
+  });
 
-document.getElementById("btn-right").addEventListener("click", () => {
-  const container = document.getElementById("novedades-container");
-  container.scrollBy({ left: 200, behavior: 'smooth' }); // Desplaza hacia la derecha
-});
+  document.getElementById("btn-right").addEventListener("click", () => {
+    const container = document.getElementById("novedades-container");
+    container.scrollBy({ left: 200, behavior: 'smooth' }); // Desplaza hacia la derecha
+  });
 
-document.getElementById("btn-left-recomendaciones").addEventListener("click", () => {
-  const container = document.getElementById("recomendaciones-container");
-  container.scrollBy({ left: -200, behavior: 'smooth' });
-});
+  document.getElementById("btn-left-recomendaciones").addEventListener("click", () => {
+    const container = document.getElementById("recomendaciones-container");
+    container.scrollBy({ left: -200, behavior: 'smooth' });
+  });
 
-document.getElementById("btn-right-recomendaciones").addEventListener("click", () => {
-  const container = document.getElementById("recomendaciones-container");
-  container.scrollBy({ left: 200, behavior: 'smooth' });
-});
+  document.getElementById("btn-right-recomendaciones").addEventListener("click", () => {
+    const container = document.getElementById("recomendaciones-container");
+    container.scrollBy({ left: 200, behavior: 'smooth' });
+  });
 
-document.getElementById("btn-left-mibiblioteca").addEventListener("click", () => {
-  const container = document.getElementById("mibiblioteca-container");
-  container.scrollBy({ left: -200, behavior: 'smooth' });
-});
+  document.getElementById("btn-left-mibiblioteca").addEventListener("click", () => {
+    const container = document.getElementById("mibiblioteca-container");
+    container.scrollBy({ left: -200, behavior: 'smooth' });
+  });
 
-document.getElementById("btn-right-mibiblioteca").addEventListener("click", () => {
-  const container = document.getElementById("mibiblioteca-container");
-  container.scrollBy({ left: 200, behavior: 'smooth' });
-});
+  document.getElementById("btn-right-mibiblioteca").addEventListener("click", () => {
+    const container = document.getElementById("mibiblioteca-container");
+    container.scrollBy({ left: 200, behavior: 'smooth' });
+  });
 
-document.getElementById("btn-left-resultados-busqueda").addEventListener("click", () => {
-  const container = document.getElementById("resultados-busqueda-container");
-  container.scrollBy({ left: -200, behavior: 'smooth' });
-});
+  document.getElementById("btn-left-resultados-busqueda").addEventListener("click", () => {
+    const container = document.getElementById("resultados-busqueda-container");
+    container.scrollBy({ left: -200, behavior: 'smooth' });
+  });
 
-document.getElementById("btn-right-resultados-busqueda").addEventListener("click", () => {
-  const container = document.getElementById("resultados-busqueda-container");
-  container.scrollBy({ left: 200, behavior: 'smooth' });
-});
-  
+  document.getElementById("btn-right-resultados-busqueda").addEventListener("click", () => {
+    const container = document.getElementById("resultados-busqueda-container");
+    container.scrollBy({ left: 200, behavior: 'smooth' });
+  });
+
   // Cargar novedades y recomendaciones
   cargarNovedades();
   cargarRecomendaciones();
