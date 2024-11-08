@@ -29,6 +29,16 @@
       width: 100%;
     }
 
+    /* Para navegadores basados en WebKit */
+    .books-container::-webkit-scrollbar {
+     display: none;
+    }
+
+    /* Para Firefox */
+    .books-container {
+    scrollbar-width: none; /* Ocultar la barra de desplazamiento */
+    }
+
     .libro {
       background-color: rgba(255, 255, 255, 0.9);
       border-radius: 8px;
