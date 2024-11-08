@@ -12,7 +12,7 @@ const firebaseConfig = {
   appId: "1:249157786292:web:0ad02cb18a1950a93395e1"
 };
 
-const booksApiKey = "YOUR_BOOKS_API_KEY";
+const booksApiKey = "AIzaSyAkHxgGGfljlPKGwom22nxZ9DMKuZtHDrQ";
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
