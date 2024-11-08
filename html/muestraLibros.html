@@ -5,90 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BookAffinity - Novedades</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <!-- Enlace al archivo CSS -->
   <link rel="stylesheet" href="https://aachucky.github.io/bookaffinity/css/styles.css">
-  <!-- Enlace a la biblioteca charts -->	
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-	
-<!-- Encabezado para mostrar el nombre del usuario -->
-<div id="user-status"> 
-  <p id="user-name">Usuario: invitado</p>
-</div>
+  <!-- Estado del Usuario -->
+  <div id="user-status"> 
+    <p id="user-name">Usuario: invitado</p>
+  </div>
 
-<h1 id="search-results-title" style="display: none;">Resultados de la Búsqueda</h1>
-<div class="books-section" id="search-results-section" style="display: none;">
-  <button class="scroll-btn left" id="btn-left-resultados-busqueda">&#8249;</button>
-  <div id="resultados-busqueda-container" class="books-container"></div>
-  <button class="scroll-btn right" id="btn-right-resultados-busqueda">&#8250;</button>
-</div>
-<!-- Formulario de búsqueda -->
+  <!-- Sección de búsqueda -->
   <div id="search-section">
     <input type="text" id="search-input" placeholder="Buscar libros...">
     <button id="search-button">Buscar</button>
-</div>
-	
-<h1>BookAffinity - Novedades</h1>
-   
+  </div>
+  
+  <!-- Resultados de la Búsqueda -->
+  <h1 id="search-results-title" style="display: none;">Resultados de la Búsqueda</h1>
+  <div class="books-section" id="search-results-section" style="display: none;">
+    <button class="scroll-btn left" id="btn-left-resultados-busqueda">&#8249;</button>
+    <div id="resultados-busqueda-container" class="books-container"></div>
+    <button class="scroll-btn right" id="btn-right-resultados-busqueda">&#8250;</button>
+  </div>
+
+  <!-- Novedades -->
+  <h1>BookAffinity - Novedades</h1>
   <div class="books-section">
     <button class="scroll-btn left" id="btn-left">&#8249;</button>
     <div id="novedades-container" class="books-container"></div>
     <button class="scroll-btn right" id="btn-right">&#8250;</button>
   </div>
 
+  <!-- Recomendaciones -->
   <h1>BookAffinity - Recomendaciones</h1>
-
   <div class="books-section">
     <button class="scroll-btn left" id="btn-left-recomendaciones">&#8249;</button>
     <div id="recomendaciones-container" class="books-container"></div>
     <button class="scroll-btn right" id="btn-right-recomendaciones">&#8250;</button>
   </div>
 
+  <!-- Mi Biblioteca -->
   <h1>Mi Biblioteca</h1>
-  <div class="books-section" id="mibiblioteca-section" style="display: none;">>
+  <div class="books-section" id="mibiblioteca-section" style="display: none;">
     <button class="scroll-btn left" id="btn-left-mibiblioteca">&#8249;</button>
     <div id="mibiblioteca-container" class="books-container"></div>
     <button class="scroll-btn right" id="btn-right-mibiblioteca">&#8250;</button>
   </div>
-	
-	<div id="book-modal">
-	  <div class="modal-content">
-	    <span id="close-modal">&times;</span>
-	    <div class="modal-book-info">
-	      <img id="modal-image" src="" alt="Portada del libro">
-	      <div>
-	        <h2 id="modal-title"></h2>
-	        <p><strong>Autor:</strong> <span id="modal-author"></span></p>
-	      </div>
-	    </div>
-	
-	    <p id="modal-description"></p>
-		
-		<!-- Puntuación media -->
-		<div id="book-rating">
-		  	<p><strong>Puntuación Media:</strong> <span id="average-rating">N/A</span></p>
-		  
-			<div id="star-rating">
-    			<!-- Aquí se generarán las estrellas dinámicamente -->
-			</div>	
 
-			<p><strong>Total de votos:</strong> <span id="total-votes">N/A</span></p>
-		</div>
-		
-		<!-- Enlaces de Ver Reseñas y Agregar Reseña -->
-		<div class="review-links">
-		  <a id="modal-review-link" href="#" class="add-review">Agregar Reseña</a>
-		  <a id="modal-view-reviews-link" href="#" class="view-reviews">Ver Reseñas</a>
-  		  <a id="modal-add-to-library-link" href="#" class="add-to-library">Agregar a Mi Biblioteca</a> 
-		</div>
-		  
-	    <p><strong>Más información:</strong> <a id="modal-link" href="#" target="_blank">Ver en Google Books</a></p>
-	  </div>
-	</div>
+  <!-- Modal de Información del Libro -->
+  <div id="book-modal" style="display: none;">
+    <div class="modal-content">
+      <span id="close-modal">&times;</span>
+      <div class="modal-book-info">
+        <img id="modal-image" src="" alt="Portada del libro">
+        <div>
+          <h2 id="modal-title"></h2>
+          <p><strong>Autor:</strong> <span id="modal-author"></span></p>
+        </div>
+      </div>
+      <p id="modal-description"></p>
+      <div id="book-rating">
+        <p><strong>Puntuación Media:</strong> <span id="average-rating">N/A</span></p>
+        <div id="star-rating"></div>
+        <p><strong>Total de votos:</strong> <span id="total-votes">N/A</span></p>
+      </div>
+      <div class="review-links">
+        <a id="modal-review-link" href="#" class="add-review">Agregar Reseña</a>
+        <a id="modal-view-reviews-link" href="#" class="view-reviews">Ver Reseñas</a>
+        <a id="modal-add-to-library-link" href="#" class="add-to-library">Agregar a Mi Biblioteca</a>
+      </div>
+      <p><strong>Más información:</strong> <a id="modal-link" href="#" target="_blank">Ver en Google Books</a></p>
+    </div>
+  </div>
 
-	<!-- Enlace al archivo JS -->
-  	<script src="https://aachucky.github.io/bookaffinity/js/script.js" type="module"></script>
-	
+  <!-- Enlace al archivo JS -->
+  <script src="https://aachucky.github.io/bookaffinity/js/script.js" type="module"></script>
 </body>
 </html>
