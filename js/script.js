@@ -137,6 +137,46 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("book-modal").style.display = "none";
   });
 
+  document.getElementById("btn-left").addEventListener("click", () => {
+  const container = document.getElementById("novedades-container");
+  container.scrollBy({ left: -200, behavior: 'smooth' }); // Desplaza hacia la izquierda
+});
+
+document.getElementById("btn-right").addEventListener("click", () => {
+  const container = document.getElementById("novedades-container");
+  container.scrollBy({ left: 200, behavior: 'smooth' }); // Desplaza hacia la derecha
+});
+
+document.getElementById("btn-left-recomendaciones").addEventListener("click", () => {
+  const container = document.getElementById("recomendaciones-container");
+  container.scrollBy({ left: -200, behavior: 'smooth' });
+});
+
+document.getElementById("btn-right-recomendaciones").addEventListener("click", () => {
+  const container = document.getElementById("recomendaciones-container");
+  container.scrollBy({ left: 200, behavior: 'smooth' });
+});
+
+document.getElementById("btn-left-mibiblioteca").addEventListener("click", () => {
+  const container = document.getElementById("mibiblioteca-container");
+  container.scrollBy({ left: -200, behavior: 'smooth' });
+});
+
+document.getElementById("btn-right-mibiblioteca").addEventListener("click", () => {
+  const container = document.getElementById("mibiblioteca-container");
+  container.scrollBy({ left: 200, behavior: 'smooth' });
+});
+
+document.getElementById("btn-left-resultados-busqueda").addEventListener("click", () => {
+  const container = document.getElementById("resultados-busqueda-container");
+  container.scrollBy({ left: -200, behavior: 'smooth' });
+});
+
+document.getElementById("btn-right-resultados-busqueda").addEventListener("click", () => {
+  const container = document.getElementById("resultados-busqueda-container");
+  container.scrollBy({ left: 200, behavior: 'smooth' });
+});
+  
   // Cargar novedades y recomendaciones
   cargarNovedades();
   cargarRecomendaciones();
