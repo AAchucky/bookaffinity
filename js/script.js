@@ -84,6 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById(containerId);
     container.innerHTML = "";  // Limpiar el contenedor antes de mostrar los libros
 
+    // Si no hay libros, mostrar un mensaje
+    if (!libros || libros.length === 0) {
+    container.innerHTML = "<p>No se encontraron libros.</p>";
+    return;
+    }
+    
     libros.forEach(libro => {
       const libroDiv = document.createElement("div");
       libroDiv.classList.add("libro");
