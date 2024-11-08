@@ -22,15 +22,28 @@ const auth = getAuth(app);
 document.addEventListener("DOMContentLoaded", () => {
   
   // Verificar estado de autenticación
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     const usuarioElemento = document.getElementById("usuario-estado");
     const logoutButton = document.getElementById("logout-button");
 
     if (usuarioElemento) {
       if (user) {
-        // Si el usuario está logueado
-        usuarioElemento.innerText = `Usuario: ${user.nombre || "Desconocido"}`;
-        
+        // Si el usuario está logueado, obtener el nombre desde Firestore
+        try {
+          const docRef = doc(db, "Usuarios", user.uid); // Referencia al documento del usuario en Firestore
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const userName = docSnap.data().nombre || "Desconocido"; // Obtener el nombre o mostrar "Desconocido"
+            usuarioElemento.innerText = `Usuario: ${userName}`;
+          } else {
+            usuarioElemento.innerText = "Usuario: Desconocido"; // Si no existe el documento, mostrar "Desconocido"
+          }
+        } catch (error) {
+          console.error("Error al obtener el nombre del usuario:", error);
+          usuarioElemento.innerText = "Usuario: Desconocido";
+        }
+
         // Si ya existe el botón de cerrar sesión, solo aseguramos que esté visible
         if (!logoutButton) {
           crearBotonCerrarSesion();  // Si no existe el botón, lo creamos
