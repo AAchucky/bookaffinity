@@ -22,7 +22,7 @@ const auth = getAuth(app);
 document.addEventListener("DOMContentLoaded", () => {
   // Verificar estado de autenticación
   onAuthStateChanged(auth, (user) => {
-    const usuarioElemento = document.getElementById("user-name");
+    const usuarioElemento = document.getElementById("usuario-estado");
     if (usuarioElemento) {
       if (user) {
         usuarioElemento.innerText = `Usuario: ${user.displayName || "Desconocido"}`;
@@ -39,23 +39,16 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutButton.innerText = "Cerrar sesión";
     logoutButton.addEventListener("click", () => {
       signOut(auth).then(() => {
-        location.reload(); // Recargar la página para mostrar el estado de invitado
+        window.location.href = "index.html"; // Redirigir al usuario a la página de inicio después de cerrar sesión
       }).catch((error) => {
         console.error("Error al cerrar sesión:", error);
       });
     });
-    document.getElementById("user-name").appendChild(logoutButton);
+    document.getElementById("usuario-estado").appendChild(logoutButton);
   }
 
-  // Función para buscar libros
-  async function buscarLibros(query) {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${booksApiKey}&maxResults=10`;
-    cargarLibros("resultados-busqueda-container", url);
-    document.getElementById("search-results-title").style.display = "block";
-  }
-
-  // Función para cargar libros
-  async function cargarLibros(containerId, url) {
+  // Función para cargar libros y mostrarlos en un contenedor específico
+  async function cargarLibros(url, containerId) {
     try {
       const response = await fetch(url);
       const data = await response.json();
@@ -70,45 +63,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para mostrar los libros
+  // Función para abrir un modal con información del libro
+  function abrirModal(titulo, autor, descripcion, portada, infoLink) {
+    document.getElementById("modal-title").innerText = titulo;
+    document.getElementById("modal-author").innerText = autor;
+    document.getElementById("modal-description").innerText = descripcion;
+    document.getElementById("modal-image").src = portada;
+    document.getElementById("modal-link").href = infoLink;
+    document.getElementById("book-modal").style.display = "flex";
+  }
+
+  // Función para buscar libros con el término ingresado
+  async function buscarLibros(query) {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
+    cargarLibros(url, "resultados-busqueda-container");
+  }
+
+  // Función para mostrar los libros en un contenedor
   function mostrarLibros(libros, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
+
     libros.forEach(libro => {
       const libroDiv = document.createElement("div");
       libroDiv.classList.add("libro");
-      const { title, authors, description, imageLinks, infoLink } = libro.volumeInfo;
-      const portada = imageLinks ? imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+
+      const titulo = libro.volumeInfo.title;
+      const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
+      const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
+      const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+      const infoLink = libro.volumeInfo.infoLink;
 
       libroDiv.innerHTML = `
         <img src="${portada}" alt="Portada del libro">
-        <h3>${title}</h3>
-        <p>${description || 'Descripción no disponible'}</p>
-        <p><strong>Autor:</strong> ${authors ? authors.join(', ') : 'Autor desconocido'}</p>
+        <h3>${titulo}</h3>
+        <p>${descripcion}</p>
+        <p><strong>Autor:</strong> ${autor}</p>
       `;
 
-      libroDiv.addEventListener("click", () => abrirModal(title, authors, description, portada, infoLink));
+      libroDiv.addEventListener("click", () => {
+        abrirModal(titulo, autor, descripcion, portada, infoLink);
+      });
+
       container.appendChild(libroDiv);
     });
   }
 
-  // Función para abrir el modal con información del libro
-  function abrirModal(titulo, autor, descripcion, portada, infoLink) {
-    document.getElementById("modal-title").innerText = titulo;
-    document.getElementById("modal-author").innerText = autor.join(', ');
-    document.getElementById("modal-description").innerText = descripcion || "Descripción no disponible";
-    document.getElementById("modal-image").src = portada;
-    document.getElementById("modal-link").href = infoLink;
-    document.getElementById("book-modal").style.display = "block";
+  // Función para cargar novedades
+  async function cargarNovedades() {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`;
+    cargarLibros(url, "novedades-container");
   }
 
-  // Cerrar el modal
-  document.getElementById("close-modal").addEventListener("click", () => {
-    document.getElementById("book-modal").style.display = "none";
-  });
+  // Función para cargar recomendaciones
+  async function cargarRecomendaciones() {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`;
+    cargarLibros(url, "recomendaciones-container");
+  }
 
-  // Vincular la búsqueda con el botón
-  document.getElementById("search-button").addEventListener("click", () => {
+  // Vincular el botón de búsqueda a la función buscarLibros
+  const searchButton = document.getElementById("search-button");
+  searchButton.addEventListener("click", () => {
     const query = document.getElementById("search-input").value.trim();
     if (query) {
       buscarLibros(query);
@@ -117,7 +132,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Función para cerrar el modal
+  document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("book-modal").style.display = "none";
+  });
+
   // Cargar novedades y recomendaciones
-  cargarLibros("novedades-container", `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=newest&key=${booksApiKey}&maxResults=10`);
-  cargarLibros("recomendaciones-container", `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&orderBy=relevance&filter=paid-ebooks&maxResults=10&key=${booksApiKey}`);
+  cargarNovedades();
+  cargarRecomendaciones();
 });
