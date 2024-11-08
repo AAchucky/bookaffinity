@@ -20,23 +20,43 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+  
   // Verificar estado de autenticación
   onAuthStateChanged(auth, (user) => {
     const usuarioElemento = document.getElementById("usuario-estado");
+    const logoutButton = document.getElementById("logout-button");
+
     if (usuarioElemento) {
       if (user) {
-        usuarioElemento.innerText = `Usuario: ${user.displayName || "Desconocido"}`;
-        crearBotonCerrarSesion();
+        // Si el usuario está logueado
+        usuarioElemento.innerText = `Usuario: ${user.nombre || "Desconocido"}`;
+        
+        // Si ya existe el botón de cerrar sesión, solo aseguramos que esté visible
+        if (!logoutButton) {
+          crearBotonCerrarSesion();  // Si no existe el botón, lo creamos
+        } else {
+          logoutButton.style.display = "block"; // Aseguramos que el botón esté visible
+        }
       } else {
+        // Si el usuario no está logueado
         usuarioElemento.innerText = "Usuario: invitado";
+        
+        // Ocultamos el botón de cerrar sesión si está presente
+        if (logoutButton) {
+          logoutButton.style.display = "none";
+        }
       }
     }
   });
 
-  // Función para crear el botón de cerrar sesión
+   // Función para crear el botón de cerrar sesión
   function crearBotonCerrarSesion() {
     const logoutButton = document.createElement("button");
+    logoutButton.id = "logout-button"; // Aseguramos que tenga un id para referenciarlo más fácilmente
     logoutButton.innerText = "Cerrar sesión";
+    logoutButton.style.display = "block";  // Aseguramos que esté visible
+    
+    // Manejador de eventos para el botón
     logoutButton.addEventListener("click", () => {
       signOut(auth).then(() => {
         window.location.href = "index.html"; // Redirigir al usuario a la página de inicio después de cerrar sesión
@@ -44,6 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al cerrar sesión:", error);
       });
     });
+
+    // Agregar el botón al contenedor
     document.getElementById("usuario-estado").appendChild(logoutButton);
   }
 
