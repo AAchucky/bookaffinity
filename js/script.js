@@ -66,13 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Función para abrir un modal con información del libro
-  function abrirModal(titulo, autor, descripcion, portada, infoLink) {
+  function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
     document.getElementById("modal-title").innerText = titulo;
     document.getElementById("modal-author").innerText = autor;
     document.getElementById("modal-description").innerText = descripcion;
     document.getElementById("modal-image").src = portada;
     document.getElementById("modal-review-link").href = `agregarReseña.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
     document.getElementById("modal-view-reviews-link").href = `muestraReseñas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
+    document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
     document.getElementById("book-modal").style.display = "flex";
   }
 
