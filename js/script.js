@@ -20,22 +20,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let usuarioLogueado = false;
+
 document.addEventListener("DOMContentLoaded", () => {
-  
+
   // Verificar el estado de autenticación cuando se carga la página
   onAuthStateChanged(auth, (user) => {
+    const usuarioElemento = document.getElementById("usuario-estado");
     if (user) {
-      console.log("Usuario autenticado");
+      // Usuario autenticado
+      usuarioLogueado = true;
+      usuarioElemento.innerText = `Usuario: ${user.displayName || "Desconocido"}`;
     } else {
-      console.log("No hay usuario autenticado.");
+      // Usuario no autenticado
+      usuarioLogueado = false;
+      usuarioElemento.innerText = "Usuario: invitado";
     }
   });
-
-  async function cargarLibros(url, containerId) {
-    const response = await fetch(url);
-    const data = await response.json();
-    mostrarLibros(data.items, containerId);
-  }
 
   async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
     document.getElementById("modal-title").innerText = titulo;
@@ -45,25 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-link").href = infoLink;
 
     const modalReviewLink = document.getElementById("modal-review-link");
-    const user = auth.currentUser; // Revisamos el usuario autenticado
 
-    if (user) {
-      // Si el usuario está autenticado, habilitamos el enlace
+    // Verificar estado de autenticación para habilitar o deshabilitar "Agregar Reseña"
+    if (usuarioLogueado) {
       modalReviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
       modalReviewLink.style.pointerEvents = "auto";
-      modalReviewLink.removeEventListener("click", preventReviewAsGuest);
+      modalReviewLink.removeEventListener("click", mostrarAlertaIniciarSesion);
     } else {
-      // Si no está logueado, deshabilitamos el enlace y mostramos la alerta
       modalReviewLink.href = "#";
       modalReviewLink.style.pointerEvents = "none";
-      modalReviewLink.addEventListener("click", preventReviewAsGuest);
+      modalReviewLink.addEventListener("click", mostrarAlertaIniciarSesion);
     }
 
+    // Link para ver reseñas
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
     mostrarResenas(bookId);
   }
 
-  function preventReviewAsGuest(event) {
+  function mostrarAlertaIniciarSesion(event) {
     alert("¡Debes iniciar sesión para agregar una reseña!");
     event.preventDefault();
   }
@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function buscarLibros(query) {
-    console.log(`Buscando libros para: ${query}`);
     try {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       const response = await fetch(url);
