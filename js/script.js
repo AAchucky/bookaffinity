@@ -19,6 +19,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+let esInvitado = true; // Variable para verificar si el usuario es invitado
+
 document.addEventListener("DOMContentLoaded", () => {
   
   // Estado de autenticación
@@ -27,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutButton = document.getElementById("logout-button");
 
     if (user) {
-      // Usuario logueado
+      esInvitado = false; // Usuario logueado
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
@@ -83,7 +85,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-author").innerText = autor;
     document.getElementById("modal-description").innerText = descripcion;
     document.getElementById("modal-image").src = portada;
-    document.getElementById("modal-review-link").href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+
+    const reviewLink = document.getElementById("modal-review-link");
+
+    // Verificar si el usuario es invitado
+    if (esInvitado) {
+      // Deshabilitar el enlace de agregar reseña
+      reviewLink.removeAttribute("href");
+      reviewLink.style.pointerEvents = "none";
+      reviewLink.style.color = "gray";
+      reviewLink.style.cursor = "not-allowed";
+      reviewLink.title = "Inicia sesión para agregar una reseña";
+    } else {
+      // Habilitar el enlace de agregar reseña para usuarios logueados
+      reviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    }
+
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
     document.getElementById("book-modal").style.display = "flex";
