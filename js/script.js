@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Función para abrir un modal con información del libro
-  function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
+  async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
     document.getElementById("modal-title").innerText = titulo;
     document.getElementById("modal-author").innerText = autor;
     document.getElementById("modal-description").innerText = descripcion;
