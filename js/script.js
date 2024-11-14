@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Estado de autenticación
   onAuthStateChanged(auth, async (user) => {
-    const usuarioElemento = document.getElementById("usuario-estado");
+    const userNameElement = document.getElementById("user-name");
     const logoutButton = document.getElementById("logout-button");
 
     if (user) {
@@ -32,49 +32,32 @@ document.addEventListener("DOMContentLoaded", () => {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
         const userName = docSnap.exists() ? docSnap.data().nombre : "Desconocido";
-        usuarioElemento.innerText = `Usuario: ${userName}`;
+        userNameElement.innerText = `Usuario: ${userName}`;
         
-        if (!logoutButton) {
-          crearBotonCerrarSesion();
-        } else {
-          logoutButton.style.display = "block";
-        }
+        logoutButton.style.display = "block";  // Mostrar el botón de cerrar sesión
       } catch (error) {
         console.error("Error al obtener el nombre del usuario:", error);
-        usuarioElemento.innerText = "Usuario: Desconocido";
+        userNameElement.innerText = "Usuario: Desconocido";
       }
     } else {
       // Usuario no logueado
-      usuarioElemento.innerText = "Usuario: invitado";
-      
-      // Limpiar cualquier sesión que pueda haberse quedado guardada
-      signOut(auth).catch((error) => console.error("Error al limpiar la sesión:", error));
-
-      if (logoutButton) {
-        logoutButton.style.display = "none";
-      }
+      userNameElement.innerText = "Usuario: invitado";
+      logoutButton.style.display = "none";  // Ocultar el botón de cerrar sesión
     }
-    });
+  });
 
-  // Crear botón de cerrar sesión
-  function crearBotonCerrarSesion() {
-    const logoutButton = document.createElement("button");
-    logoutButton.id = "logout-button";
-    logoutButton.innerText = "Cerrar sesión";
-    logoutButton.style.display = "block";
-    
-    logoutButton.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "index.html";
-      }).catch((error) => {
+  // Configurar evento de cierre de sesión
+  const logoutButton = document.getElementById("logout-button");
+  logoutButton.addEventListener("click", () => {
+    signOut(auth)
+      .then(() => {
+        console.log("Sesión cerrada correctamente.");
+        window.location.href = "index.html";  // Redirigir a la página de inicio
+      })
+      .catch((error) => {
         console.error("Error al cerrar sesión:", error);
       });
-    });
-
-    document.getElementById("user-status").appendChild(logoutButton);
-  }
-
-
+  });
 
   // Función para cargar libros y mostrarlos en un contenedor específico
   async function cargarLibros(url, containerId) {
