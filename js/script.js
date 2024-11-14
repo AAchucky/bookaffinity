@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (logoutButton) {
         logoutButton.style.display = "none";
       }
+    }
     });
 
   // Crear botón de cerrar sesión
@@ -72,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("user-status").appendChild(logoutButton);
   }
+
 
 
   // Función para cargar libros y mostrarlos en un contenedor específico
