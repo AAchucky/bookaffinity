@@ -146,9 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const starContainer = document.getElementById("star-rating");
     starContainer.innerHTML = ""; // Limpiar las estrellas anteriores
   
+    // La puntuación se representa en una escala de 0 a 10
     const fullStars = Math.floor(puntuacion);  // Estrellas completas
-    const hasHalfStar = puntuacion % 1 >= 0.5; // Comprobar si hay una estrella parcial
-    const emptyStars = 5 - Math.ceil(puntuacion);  // Estrellas vacías
+    const halfStar = puntuacion % 1 >= 0.5 ? 1 : 0;  // Verificar si hay una estrella parcial
+    const emptyStars = 10 - fullStars - halfStar;  // Rellenar con estrellas vacías el resto
   
     // Agregar estrellas completas
     for (let i = 0; i < fullStars; i++) {
@@ -159,21 +160,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     // Agregar estrella parcial si corresponde
-    if (hasHalfStar) {
+    if (halfStar) {
       const star = document.createElement("span");
       star.classList.add("star", "half-filled");
-      star.innerHTML = "&#9733;";  // Usamos la misma estrella, pero con un estilo diferente si fuera necesario
+      star.innerHTML = "&#9733;";  // Estrella parcialmente llena con un gradiente
       starContainer.appendChild(star);
     }
   
     // Agregar estrellas vacías
     for (let i = 0; i < emptyStars; i++) {
       const star = document.createElement("span");
-      star.classList.add("star");
-      star.innerHTML = "&#9734;";  // Código de estrella vacía
+      star.classList.add("star", "empty");
+      star.innerHTML = "&#9733;";  // Estrella vacía
       starContainer.appendChild(star);
     }
   }
+
   async function buscarLibros(query) {
     if (query) {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
