@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("user-status").appendChild(logoutButton);
   }
-});
+
 
   // Función para cargar libros y mostrarlos en un contenedor específico
   async function cargarLibros(url, containerId) {
