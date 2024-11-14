@@ -210,6 +210,7 @@
 		  display: flex;
 		  justify-content: center;
 		  margin-bottom: 5px;
+		  align-items: center;
 		}
 		
 		.star {
@@ -221,6 +222,16 @@
 		
 		.star.filled {
 		    color: #FFD700; /* Color dorado para las estrellas rellenas */
+		}
+
+		.star.half-filled {
+		  background: linear-gradient(to right, gold 50%, gray 50%);
+		  -webkit-background-clip: text;
+		  color: transparent;
+		}
+		
+		.star.empty {
+		  color: lightgray;
 		}
 
 		
