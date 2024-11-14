@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
     // Buscar las reseñas en Firestore para este libro específico
-    const reseñasRef = collection(db, "Reseñas");
+    const reseñasRef = collection(db, "Resenas");
     const q = query(reseñasRef, where("libro_id", "==", bookId));
     const querySnapshot = await getDocs(q);
 
