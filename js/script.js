@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     signOut(auth)
       .then(() => {
         console.log("Sesión cerrada correctamente.");
-        window.location.href = "/index.html";  // Redirigir a la página de inicio
+        window.location.href = "/bookaffinity/index.html";  // Redirigir a la página de inicio
       })
       .catch((error) => {
         console.error("Error al cerrar sesión:", error);
