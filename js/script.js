@@ -128,15 +128,52 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("average-rating").innerText = averageRating;
     document.getElementById("total-votes").innerText = ratingCount;
 
+    // Mostrar las estrellas de la puntuación media
+    mostrarEstrellas(averageRating);
+
   } catch (error) {
     console.error("Error al obtener las reseñas desde Firestore:", error);
     document.getElementById("average-rating").innerText = "N/A";
     document.getElementById("total-votes").innerText = "0";
+    mostrarEstrellas(0);
   }
     // Mostrar el modal
     document.getElementById("book-modal").style.display = "flex";
   }
 
+  // Función para mostrar las estrellas basadas en la puntuación
+  function mostrarEstrellas(puntuacion) {
+    const starContainer = document.getElementById("star-rating");
+    starContainer.innerHTML = ""; // Limpiar las estrellas anteriores
+  
+    const fullStars = Math.floor(puntuacion);  // Estrellas completas
+    const hasHalfStar = puntuacion % 1 >= 0.5; // Comprobar si hay una estrella parcial
+    const emptyStars = 5 - Math.ceil(puntuacion);  // Estrellas vacías
+  
+    // Agregar estrellas completas
+    for (let i = 0; i < fullStars; i++) {
+      const star = document.createElement("span");
+      star.classList.add("star", "filled");
+      star.innerHTML = "&#9733;";  // Código de estrella completa
+      starContainer.appendChild(star);
+    }
+  
+    // Agregar estrella parcial si corresponde
+    if (hasHalfStar) {
+      const star = document.createElement("span");
+      star.classList.add("star", "half-filled");
+      star.innerHTML = "&#9733;";  // Usamos la misma estrella, pero con un estilo diferente si fuera necesario
+      starContainer.appendChild(star);
+    }
+  
+    // Agregar estrellas vacías
+    for (let i = 0; i < emptyStars; i++) {
+      const star = document.createElement("span");
+      star.classList.add("star");
+      star.innerHTML = "&#9734;";  // Código de estrella vacía
+      starContainer.appendChild(star);
+    }
+  }
   async function buscarLibros(query) {
     if (query) {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
