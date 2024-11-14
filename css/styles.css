@@ -87,18 +87,18 @@
       overflow: hidden;
     }
 
-		.scroll-btn {
-		  background-color: transparent;
-		  border: none;
-		  font-size: 3.5rem;
-		  cursor: pointer;
-		  z-index: 1;
-		  padding: 10px;
-		  color: black;
-		  position: absolute;
-		  top: 50%; /* Centra verticalmente */
-		  transform: translateY(-50%); /* Ajusta para un centrado completo */
-		}
+   .scroll-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 3.5rem;
+    cursor: pointer;
+    z-index: 1;
+    padding: 10px;
+    color: black;
+    position: absolute;
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Ajusta para un centrado completo */
+    }
 
     .scroll-btn.left {
       position: absolute;
