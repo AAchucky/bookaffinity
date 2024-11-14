@@ -104,27 +104,36 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
 
-    // Consultar la base de datos para obtener la puntuación promedio y total de votos
     try {
-      const libroRef = doc(db, "Libros", bookId);
-      const libroSnap = await getDoc(libroRef);
-  
-      if (libroSnap.exists()) {
-        const ratingSum = libroSnap.data().ratingSum || 0;
-        const ratingCount = libroSnap.data().ratingCount || 0;
-        const averageRating = ratingCount > 0 ? (ratingSum / ratingCount).toFixed(1) : "N/A";
-  
-        document.getElementById("average-rating").innerText = `Puntuación media: ${averageRating}`;
-        document.getElementById("total-votes").innerText = `(Total de votos: ${ratingCount})`;
-      } else {
-        console.log("No se encontró el libro en la base de datos.");
-        document.getElementById("average-rating").innerText = "Puntuación media: N/A";
-        document.getElementById("total-votes").innerText = "(Total de votos: 0)";
+    // Buscar las reseñas en Firestore para este libro específico
+    const reseñasRef = collection(db, "Reseñas");
+    const q = query(reseñasRef, where("libro_id", "==", bookId));
+    const querySnapshot = await getDocs(q);
+
+    let totalRating = 0;
+    let ratingCount = 0;
+
+    // Calcular la puntuación media y el total de votos
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.puntuacion) {
+        totalRating += data.puntuacion;  // Sumar la puntuación de cada reseña
+        ratingCount += 1;  // Contar la reseña
       }
-    } catch (error) {
-      console.error("Error al obtener los datos de puntuación:", error);
-    }
-    
+    });
+
+    // Si hay reseñas, calcular la puntuación media
+    const averageRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "N/A";
+
+    document.getElementById("average-rating").innerText = averageRating;
+    document.getElementById("total-votes").innerText = ratingCount;
+
+  } catch (error) {
+    console.error("Error al obtener las reseñas desde Firestore:", error);
+    document.getElementById("average-rating").innerText = "N/A";
+    document.getElementById("total-votes").innerText = "0";
+  }
+    // Mostrar el modal
     document.getElementById("book-modal").style.display = "flex";
   }
 
