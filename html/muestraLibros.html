@@ -10,17 +10,17 @@
 </head>
 <body>
 
-<!-- Estado del Usuario -->
-<div id="user-status"> 
-  <p id="user-name">Usuario: invitado</p>
-  <button id="logout-button" style="display: none;">Cerrar sesión</button>
+<!-- Estado del Usuario y Botón de Cerrar Sesión -->
+<div id="user-status" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px;">
+  <p id="user-name" style="margin: 0;">Usuario: invitado</p>
+  <button id="logout-button" class="logout-button" style="display: none;">Cerrar sesión</button>
 </div>
-  
-  <!-- Sección de búsqueda -->
-  <div id="search-section">
-    <input type="text" id="search-input" placeholder="Buscar libros...">
-    <button id="search-button">Buscar</button>
-  </div>
+
+<!-- Sección de búsqueda (centrada) -->
+<div id="search-section" style="text-align: center; margin-top: 20px;">
+  <input type="text" id="search-input" placeholder="Buscar libros...">
+  <button id="search-button">Buscar</button>
+</div>
   
   <!-- Resultados de la Búsqueda -->
   <h1 id="search-results-title" style="display: none;">Resultados de la Búsqueda</h1>
