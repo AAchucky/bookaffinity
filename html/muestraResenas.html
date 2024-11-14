@@ -104,6 +104,17 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+     // Comprobar si el usuario está autenticado
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si el usuario está autenticado, mostrar el botón de cerrar sesión
+        document.getElementById("logout-button").style.display = "block";
+      } else {
+        // Si no hay usuario (invitado), ocultar el botón de cerrar sesión
+        document.getElementById("logout-button").style.display = "none";
+      }
+    });
+
     async function obtenerReseñasYActualizarTitulo(tituloLibro) {
       document.getElementById("page-title").textContent = `Reseñas de ${tituloLibro}`;
       document.getElementById("titulo-resenas").textContent = `Reseñas de "${tituloLibro}"`;
