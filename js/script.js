@@ -21,66 +21,59 @@ const auth = getAuth(app);
 
 document.addEventListener("DOMContentLoaded", () => {
   
-  // Verificar estado de autenticación
+  // Estado de autenticación
   onAuthStateChanged(auth, async (user) => {
     const usuarioElemento = document.getElementById("usuario-estado");
     const logoutButton = document.getElementById("logout-button");
 
-    if (usuarioElemento) {
-      if (user) {
-        // Si el usuario está logueado, obtener el nombre desde Firestore
-        try {
-          const docRef = doc(db, "Usuarios", user.uid); // Referencia al documento del usuario en Firestore
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            const userName = docSnap.data().nombre || "Desconocido"; // Obtener el nombre o mostrar "Desconocido"
-            usuarioElemento.innerText = `Usuario: ${userName}`;
-          } else {
-            usuarioElemento.innerText = "Usuario: Desconocido"; // Si no existe el documento, mostrar "Desconocido"
-          }
-        } catch (error) {
-          console.error("Error al obtener el nombre del usuario:", error);
-          usuarioElemento.innerText = "Usuario: Desconocido";
-        }
-
-        // Si ya existe el botón de cerrar sesión, solo aseguramos que esté visible
-        if (!logoutButton) {
-          crearBotonCerrarSesion();  // Si no existe el botón, lo creamos
-        } else {
-          logoutButton.style.display = "block"; // Aseguramos que el botón esté visible
-        }
-      } else {
-        // Si el usuario no está logueado
-        usuarioElemento.innerText = "Usuario: invitado";
+    if (user) {
+      // Usuario logueado
+      try {
+        const docRef = doc(db, "Usuarios", user.uid);
+        const docSnap = await getDoc(docRef);
+        const userName = docSnap.exists() ? docSnap.data().nombre : "Desconocido";
+        usuarioElemento.innerText = `Usuario: ${userName}`;
         
-        // Ocultamos el botón de cerrar sesión si está presente
-        if (logoutButton) {
-          logoutButton.style.display = "none";
+        if (!logoutButton) {
+          crearBotonCerrarSesion();
+        } else {
+          logoutButton.style.display = "block";
         }
+      } catch (error) {
+        console.error("Error al obtener el nombre del usuario:", error);
+        usuarioElemento.innerText = "Usuario: Desconocido";
+      }
+    } else {
+      // Usuario no logueado
+      usuarioElemento.innerText = "Usuario: invitado";
+      
+      // Limpiar cualquier sesión que pueda haberse quedado guardada
+      signOut(auth).catch((error) => console.error("Error al limpiar la sesión:", error));
+
+      if (logoutButton) {
+        logoutButton.style.display = "none";
       }
     }
   });
 
-   // Función para crear el botón de cerrar sesión
+  // Crear botón de cerrar sesión
   function crearBotonCerrarSesion() {
     const logoutButton = document.createElement("button");
-    logoutButton.id = "logout-button"; // Aseguramos que tenga un id para referenciarlo más fácilmente
+    logoutButton.id = "logout-button";
     logoutButton.innerText = "Cerrar sesión";
-    logoutButton.style.display = "block";  // Aseguramos que esté visible
+    logoutButton.style.display = "block";
     
-    // Manejador de eventos para el botón
     logoutButton.addEventListener("click", () => {
       signOut(auth).then(() => {
-        window.location.href = "https://aachucky.github.io/bookaffinity"; // Redirigir al usuario a la página de inicio después de cerrar sesión
+        window.location.href = "index.html";
       }).catch((error) => {
         console.error("Error al cerrar sesión:", error);
       });
     });
 
-    // Agregar el botón al contenedor
-    document.getElementById("usuario-estado").appendChild(logoutButton);
+    document.getElementById("user-status").appendChild(logoutButton);
   }
+});
 
   // Función para cargar libros y mostrarlos en un contenedor específico
   async function cargarLibros(url, containerId) {
