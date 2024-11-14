@@ -105,6 +105,25 @@
     </div>
   </div>
 
+  <script>
+      // Al hacer clic en el botón, la página sube al inicio con animación
+      document.getElementById("scroll-top-button").addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+  
+      // Mostrar u ocultar el botón dependiendo del scroll de la página
+      window.addEventListener("scroll", () => {
+          const button = document.getElementById("scroll-top-button");
+          if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+              button.style.display = "block"; // Mostrar botón
+          } else {
+              button.style.display = "none"; // Ocultar botón
+          }
+      });
+  </script>
+
+
+  
   <!-- Enlace al archivo JS -->
   <script src="https://aachucky.github.io/bookaffinity/js/script.js" type="module"></script>
 </body>
