@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Manejador de eventos para el botón
     logoutButton.addEventListener("click", () => {
       signOut(auth).then(() => {
-        window.location.href = "index.html"; // Redirigir al usuario a la página de inicio después de cerrar sesión
+        window.location.href = "https://aachucky.github.io/bookaffinity"; // Redirigir al usuario a la página de inicio después de cerrar sesión
       }).catch((error) => {
         console.error("Error al cerrar sesión:", error);
       });
