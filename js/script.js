@@ -103,6 +103,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+
+    // Consultar la base de datos para obtener la puntuación promedio y total de votos
+    try {
+      const libroRef = doc(db, "Libros", bookId);
+      const libroSnap = await getDoc(libroRef);
+  
+      if (libroSnap.exists()) {
+        const ratingSum = libroSnap.data().ratingSum || 0;
+        const ratingCount = libroSnap.data().ratingCount || 0;
+        const averageRating = ratingCount > 0 ? (ratingSum / ratingCount).toFixed(1) : "N/A";
+  
+        document.getElementById("average-rating").innerText = `Puntuación media: ${averageRating}`;
+        document.getElementById("total-votes").innerText = `(Total de votos: ${ratingCount})`;
+      } else {
+        console.log("No se encontró el libro en la base de datos.");
+        document.getElementById("average-rating").innerText = "Puntuación media: N/A";
+        document.getElementById("total-votes").innerText = "(Total de votos: 0)";
+      }
+    } catch (error) {
+      console.error("Error al obtener los datos de puntuación:", error);
+    }
+    
     document.getElementById("book-modal").style.display = "flex";
   }
 
