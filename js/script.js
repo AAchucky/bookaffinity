@@ -312,6 +312,17 @@ document.addEventListener("DOMContentLoaded", () => {
     container.scrollBy({ left: 200, behavior: 'smooth' });
   });
 
+  window.addEventListener('beforeunload', () => {
+  const auth = getAuth(app);
+  if (auth.currentUser) {
+    signOut(auth).then(() => {
+      console.log("Sesión cerrada automáticamente al cerrar el navegador.");
+    }).catch(error => {
+      console.error("Error al cerrar sesión automáticamente:", error);
+    });
+  }
+});
+
   // Cargar novedades y recomendaciones
   cargarNovedades();
   cargarRecomendaciones();
