@@ -53,8 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (logoutButton) {
         logoutButton.style.display = "none";
       }
-    }
-  });
+    });
 
   // Crear botón de cerrar sesión
   function crearBotonCerrarSesion() {
