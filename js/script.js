@@ -103,6 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;   
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}`;
+    
+    // Asegurarse de que el enlace "Ver en Google Books" se configure correctamente
+    document.getElementById("modal-link").href = infoLink;  // Asignamos correctamente el enlace aquí
 
     try {
     // Buscar las reseñas en Firestore para este libro específico
