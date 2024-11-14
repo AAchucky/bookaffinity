@@ -153,10 +153,12 @@
 
     // Cancelar la acción
     document.getElementById("cancel-button").addEventListener("click", () => {
-      const { tituloLibro } = getQueryParams();
-      if (tituloLibro) {
-        // Redirigir a la página de reseñas del libro
-        window.location.href = `muestraResenas.html?titulo=${encodeURIComponent(tituloLibro)}`;
+      const { tituloLibro, bookId } = getQueryParams(); // Ahora también se obtiene el bookId
+      if (tituloLibro && bookId) {
+        // Redirigir a la página de reseñas del libro, pasando ambos parámetros
+        window.location.href = `muestraResenas.html?titulo=${encodeURIComponent(tituloLibro)}&bookId=${encodeURIComponent(bookId)}`;
+      } else {
+        console.error("No se ha proporcionado un título o un ID de libro.");
       }
     });
 
