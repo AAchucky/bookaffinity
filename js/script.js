@@ -195,58 +195,42 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+  // Función para mostrar los libros en un contenedor
   function mostrarLibros(libros, containerId) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = ""; // Limpiar el contenedor antes de mostrar los libros
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";  // Limpiar el contenedor antes de mostrar los libros
 
-  // Si no hay libros, mostrar un mensaje
-  if (!libros || libros.length === 0) {
+    // Si no hay libros, mostrar un mensaje
+    if (!libros || libros.length === 0) {
     container.innerHTML = "<p>No se encontraron libros.</p>";
     return;
+    }
+    
+    libros.forEach(libro => {
+      const libroDiv = document.createElement("div");
+      libroDiv.classList.add("libro");
+
+      const titulo = libro.volumeInfo.title;
+      const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(', ') : 'Autor desconocido';
+      const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
+      const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
+      const infoLink = libro.volumeInfo.infoLink;
+      const bookId = libro.id; 
+
+      libroDiv.innerHTML = `
+        <img src="${portada}" alt="Portada del libro">
+        <h3>${titulo}</h3>
+        <p>${descripcion}</p>
+        <p><strong>Autor:</strong> ${autor}</p>
+      `;
+
+      libroDiv.addEventListener("click", () => {
+        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
+      });
+
+      container.appendChild(libroDiv);
+    });
   }
-
-  libros.forEach((libro) => {
-    const libroDiv = document.createElement("div");
-    libroDiv.classList.add("libro");
-
-    const titulo = libro.volumeInfo.title;
-    const autor = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(", ") : "Autor desconocido";
-    const descripcion = libro.volumeInfo.description || "Descripción no disponible";
-    const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : "https://books.google.com/googlebooks/images/no_cover_thumb.gif";
-    const infoLink = libro.volumeInfo.infoLink;
-    const bookId = libro.id;
-
-    libroDiv.innerHTML = `
-      <img src="${portada}" alt="Portada del libro">
-      <h3>${titulo}</h3>
-      <p>${descripcion}</p>
-      <p><strong>Autor:</strong> ${autor}</p>
-    `;
-
-    // Agregar eventos para cambiar el fondo dinámico
-    libroDiv.addEventListener("mouseenter", () => {
-      const overlay = document.getElementById("background-overlay");
-      const backgroundImage = document.getElementById("background-image");
-      const backgroundTitle = document.getElementById("background-title");
-      const backgroundAuthor = document.getElementById("background-author");
-      const backgroundDescription = document.getElementById("background-description");
-
-      overlay.classList.add("active");
-      backgroundImage.src = portada;
-      backgroundTitle.innerText = titulo;
-      backgroundAuthor.innerText = `Autor: ${autor}`;
-      backgroundDescription.innerText = descripcion;
-    });
-
-    libroDiv.addEventListener("mouseleave", () => {
-      const overlay = document.getElementById("background-overlay");
-      overlay.classList.remove("active");
-    });
-
-    container.appendChild(libroDiv);
-  });
-}
-
 
   // Función para cargar novedades
   async function cargarNovedades() {
