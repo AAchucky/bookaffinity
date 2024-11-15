@@ -55,6 +55,16 @@ h1 {
         -webkit-line-clamp: 4 !important; /* Limita la descripción a 2 líneas */
         -webkit-box-orient: vertical !important; /* Configura orientación vertical */
     }
+  
+  /* Mostrar el nombre del libro completo */
+  .books-container .libro h3 {
+    font-size: 0.9rem; /* Tamaño del texto */
+    white-space: normal; /* Permite que el texto ocupe múltiples líneas */
+    overflow: visible; /* Asegura que no se oculte el texto */
+    text-overflow: clip; /* Elimina puntos suspensivos */
+    margin-bottom: 5px; /* Espaciado con el resto del contenido */
+    color: #333;
+  }
 }
 
 /* Para navegadores basados en WebKit */
