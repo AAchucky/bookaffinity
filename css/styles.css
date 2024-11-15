@@ -52,7 +52,7 @@ h1 {
         font-size: 0.7rem !important; /* Texto más pequeño en la descripción */
         line-height: 1.2 !important; /* Reduce la altura de línea */
         display: -webkit-box !important; /* Caja flexible para limitar líneas */
-        -webkit-line-clamp: 5 !important; /* Limita la descripción a 2 líneas */
+        -webkit-line-clamp: 4 !important; /* Limita la descripción a 2 líneas */
         -webkit-box-orient: vertical !important; /* Configura orientación vertical */
     }
 }
