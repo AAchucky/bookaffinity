@@ -36,15 +36,15 @@ h1 {
   }
 
   .libro {
-    width: calc(100% / 3 - 10px); /* Tamaño de cada libro en móviles */
+    width: calc(100% / 3 - 20px); /* Tamaño de cada libro en móviles */
     height: auto; /* Asegura que el contenedor se ajuste dinámicamente */
-    max-height: 280px; /* Limita la altura máxima del contenedor */
+    max-height: 250px; /* Limita la altura máxima del contenedor */
     overflow: hidden; /* Evita el desbordamiento */
   }
 
   .libro img {
-    height: 100px; /* Ajusta la altura de las imágenes */
-    max-height: 100px; /* Evita que las imágenes sean demasiado altas */
+    height: 120px; /* Ajusta la altura de las imágenes */
+    max-height: 120px; /* Evita que las imágenes sean demasiado altas */
     object-fit: cover; /* Mantiene el aspecto dentro del contenedor */
   }
 
