@@ -36,13 +36,13 @@
 	  }
 	
 	  .libro {
-	    width: calc(100% / 4 - 15px); /* Cambia esto para hacer los libros más estrechos */
+	    width: calc(100% / 6 - 15px); /* Cambia esto para hacer los libros más estrechos */
 	    height: auto; /* Puedes ajustar si quieres limitar la altura */
 	  }
 	  
 	  .libro img {
-	    height: 120px; /* Ajusta la altura de la imagen de portada */
-	    max-height: 120px; /* También puedes añadir un límite de altura */
+	    height: 100px; /* Ajusta la altura de la imagen de portada */
+	    max-height: 100px; /* También puedes añadir un límite de altura */
 	    object-fit: cover; /* Asegura que la imagen mantenga su aspecto dentro del tamaño especificado */
 	  }
 	}
