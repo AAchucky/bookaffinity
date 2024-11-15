@@ -1,313 +1,183 @@
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #e0e0d3;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
+/* Estilos generales */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #e0e0d3;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 40px;
-      color: #000;
-    }
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: #000;
+}
 
-    .books-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      max-width: 100%;
-    }
+.books-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  max-width: 100%;
+}
 
-    .books-container {
-      display: flex;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      padding: 20px 0;
-      width: 100%;
-    }
+.books-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 20px 0;
+  width: 100%;
+}
 
-    /* Para navegadores basados en WebKit */
-    .books-container::-webkit-scrollbar {
-     display: none;
-    }
+.books-container::-webkit-scrollbar {
+  display: none; /* Ocultar barra de desplazamiento en WebKit */
+}
 
-    /* Para Firefox */
-    .books-container {
-    scrollbar-width: none; /* Ocultar la barra de desplazamiento */
-    }
+.books-container {
+  scrollbar-width: none; /* Ocultar barra de desplazamiento en Firefox */
+}
 
-    .libro {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 8px;
-      padding: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin: 0 10px;
-      flex: 0 0 auto;
-      width: 150px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-    }
+.libro {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 0 10px;
+  flex: 0 0 auto;
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
 
-    /* Efecto hover para las tarjetas */
-    .libro:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
+/* Efecto hover para las tarjetas */
+.libro:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-    .libro img {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      margin-bottom: 10px;
-      max-height: 150px;
-      object-fit: cover;
-    }
+.libro img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  max-height: 150px;
+  object-fit: cover;
+}
 
-    .libro h3 {
-      font-size: 0.9rem;
-      margin: 0 0 5px 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #333;
-    }
+.libro h3 {
+  font-size: 0.9rem;
+  margin: 0 0 5px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+}
 
-    .libro p {
-      font-size: 0.8rem;
-      color: #666;
-      margin: 0 0 8px 0;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
+.libro p {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-   .scroll-btn {
-    background-color: transparent;
-    border: none;
-    font-size: 3.5rem;
-    cursor: pointer;
-    z-index: 1;
-    padding: 10px;
-    color: black;
-    position: absolute;
-    top: 50%; /* Centra verticalmente */
-    transform: translateY(-50%); /* Ajusta para un centrado completo */
-    }
+.scroll-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 3.5rem;
+  cursor: pointer;
+  z-index: 1;
+  padding: 10px;
+  color: black;
+  position: absolute;
+  top: 50%; /* Centra verticalmente */
+  transform: translateY(-50%); /* Ajusta para un centrado completo */
+}
 
-    .scroll-btn.left {
-      position: absolute;
-      left: 0;
-    }
+.scroll-btn.left {
+  position: absolute;
+  left: 0;
+}
 
-    .scroll-btn.right {
-      position: absolute;
-      right: 0;
-    }
+.scroll-btn.right {
+  position: absolute;
+  right: 0;
+}
 
-    .scroll-btn:hover {
-      color: #333;
-    }
+.scroll-btn:hover {
+  color: #333;
+}
 
-    #book-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
+#book-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
 
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 80%;
-      overflow-y: auto;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-    #close-modal {
-      cursor: pointer;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 1.5rem;
-      color: #aaa;
-    }
+#close-modal {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  color: #aaa;
+}
 
-    #close-modal:hover {
-      color: #000;
-    }
+#close-modal:hover {
+  color: #000;
+}
 
-    .modal-book-info {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-    }
+/* Ajustes específicos para pantallas más pequeñas */
+@media screen and (max-width: 768px) {
+  .books-container {
+    padding: 10px 0; /* Reducir el espacio vertical */
+  }
 
-    .modal-book-info img {
-      width: 80px;
-      height: auto;
-      border-radius: 4px;
-      margin-right: 15px;
-    }
+  .libro {
+    width: 130px; /* Reducir el ancho de cada tarjeta */
+    margin: 0 5px; /* Reducir el espacio entre libros */
+  }
 
-    .modal-book-info div {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .review-links {
-		  display: flex;
-		  gap: 60px; /* Espacio entre los enlaces */
-		  margin-top: 10px;
-		}
-		
-		.review-links a {
-		  text-decoration: none;
-		  color: #007BFF;
-		  font-weight: bold;
-		}
-		
-		.review-links a:hover {
-		  text-decoration: underline;
-		}
-		
-		#book-rating {
-		  margin: 10px 0;
-		  font-size: 1rem;
-		  color: #333;
-		}
-		
-		canvas#votes-chart {
-		  margin-top: 10px;
-		  max-width: 100%;
-		}
-		
-		#rating-section {
-		  display: flex;
-		  flex-direction: column;
-		  align-items: center;
-		  gap: 10px;
-		}
-		
-		#star-rating {
-		  display: flex;
-		  justify-content: center;
-		  margin-bottom: 5px;
-		  align-items: center;
-		}
-		
-		.star {
-		    display: inline-block;
-		    font-size: 2rem; /* Tamaño de las estrellas */
-		    color: #d3d3d3; /* Color gris claro por defecto */
-		    cursor: pointer; /* Cursor de puntero */
-		}
-		
-		.star.filled {
-		    color: #FFD700; /* Color dorado para las estrellas rellenas */
-		}
+  .libro img {
+    max-height: 120px; /* Reducir altura máxima de la imagen */
+  }
 
-		.star.half-filled {
-		  background: linear-gradient(to right, gold 50%, gray 50%);
-		  -webkit-background-clip: text;
-		  color: transparent;
-		}
-		
-		.star.empty {
-		  color: lightgray;
-		}
+  .libro h3 {
+    font-size: 0.85rem; /* Reducir tamaño del título */
+  }
 
-		
-		#average-score {
-		  display: flex;
-		  gap: 15px;
-		}
-		
-		.score-box {
-		  background-color: #4682B4; /* Azul claro */
-		  padding: 10px;
-		  border-radius: 5px;
-		  color: white;
-		  font-size: 24px;
-		  font-weight: bold;
-		}
-		
-		.votes-box {
-		  font-size: 14px;
-		  color: #555;
-		  text-align: center;
-		  margin-top: 10px;
-		}
-		
-		#chart-container {
-		  width: 100px; /* Ajusta el tamaño de la gráfica */
-		  height: 100px;
-		}
-		
-		.star-rating {
-		  direction: rtl; /* Hace que se ordenen las estrellas de derecha a izquierda */
-		  font-size: 2rem; /* Tamaño de las estrellas */
-		  color: #FFD700; /* Color dorado para las estrellas */
-		  display: inline-block;
-		}
-		
-		.star-rating .star {
-		  cursor: pointer;
-		  display: inline-block;
-		}
-		
-		.star-rating .star:hover,
-		.star-rating .star:hover ~ .star {
-		  color: #FFAA00; /* Cambia el color al pasar el mouse sobre las estrellas */
-		}
+  .libro p {
+    font-size: 0.75rem; /* Reducir tamaño de la descripción */
+  }
 
-	/* Estilos específicos de las reseñas */
-	.reseña {
-	    background-color: white; /* Fondo blanco para cada reseña */
-	    padding: 15px; /* Espacio interno */
-	    border-radius: 5px; /* Bordes redondeados */
-	    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra suave */
-	    margin: 10px 0; /* Espacio entre las reseñas */
-	}
-	
-	.reseña h4 {
-	  margin: 0;
-	  color: #333;
-	  font-size: 1.2rem;
-	}
-	
-	.reseña p {
-	  margin: 5px 0;
-	  color: #555;
-	}
-	
-	.reseña .fecha {
-	  font-size: 0.9rem;
-	  color: #888;
-	  margin-bottom: 10px;
-	}
-
-	#search-results-section {
-	  display: none;
-	  flex-direction: row;
-	  align-items: center;
-	  gap: 10px;
-	  transition: opacity 0.5s ease-in-out;
-	}
+  .scroll-btn {
+    font-size: 3rem; /* Reducir tamaño de las flechas */
+    padding: 5px;
+  }
+}
