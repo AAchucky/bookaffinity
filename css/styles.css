@@ -36,7 +36,7 @@
 	}
 		
 	.libro {
-	width: calc(100% / 4 - 30px); /* Mostrar 3 libros por fila en horizontal */
+	width: calc(100% / 6 - 40px); /* Mostrar 3 libros por fila en horizontal */
 	}
       }
 
