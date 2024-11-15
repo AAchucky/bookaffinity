@@ -29,43 +29,53 @@ h1 {
   width: 100%;
 }
 
-/* Adaptación específica solo para pantallas pequeñas */
 @media (max-width: 768px) {
   .books-container {
     padding: 10px 0;
   }
 
-  /* Especificidad aumentada para que no sobrescriba el selector global .libro */
   .books-container .libro {
-    width: calc(100% / 3 - 20px);  /* 3 libros por fila */
-    height: 250px; /* Ajusta la altura de los libros */
+    width: calc(100% / 3 - 20px); /* Tres libros por fila */
+    height: auto; /* Altura flexible */
+    display: flex;
+    flex-direction: column; /* Apilar elementos dentro de la tarjeta */
+    justify-content: space-between; /* Distribuir espacio */
   }
 
-  /* Ajusta la altura de las imágenes de portada */
   .books-container .libro img {
-    height: 120px;  /* Ajusta la altura de la imagen de portada */
-    max-height: 120px;  /* Asegura que no sea mayor que esta altura */
-    object-fit: cover;  /* Mantiene el aspecto adecuado de la imagen */
+    height: 120px; /* Ajustar altura de las imágenes */
+    max-height: 120px;
+    object-fit: cover;
+  }
+
+  .books-container .libro h3 {
+    font-size: 0.8rem; /* Ajustar tamaño del título */
+    margin: 5px 0; /* Espaciado alrededor del título */
+    white-space: normal; /* Permitir ajuste automático del texto */
+    overflow: hidden; /* Ocultar cualquier desbordamiento */
+  }
+
+  .books-container .libro .author {
+    font-size: 0.7rem; /* Tamaño más pequeño para el autor */
+    color: #555; /* Color tenue para diferenciar */
+    margin-bottom: 5px; /* Espacio entre el autor y la descripción */
+    white-space: nowrap; /* Mantener en una sola línea */
+    overflow: hidden; /* Ocultar si es demasiado largo */
+    text-overflow: ellipsis; /* Agregar puntos suspensivos si es necesario */
   }
 
   .books-container .libro p {
-        font-size: 0.7rem !important; /* Texto más pequeño en la descripción */
-        line-height: 1.2 !important; /* Reduce la altura de línea */
-        display: -webkit-box !important; /* Caja flexible para limitar líneas */
-        -webkit-line-clamp: 4 !important; /* Limita la descripción a 2 líneas */
-        -webkit-box-orient: vertical !important; /* Configura orientación vertical */
-    }
-  
-  /* Mostrar el nombre del libro completo */
-  .books-container .libro h3 {
-    font-size: 0.9rem; /* Tamaño del texto */
-    white-space: normal; /* Permite que el texto ocupe múltiples líneas */
-    overflow: visible; /* Asegura que no se oculte el texto */
-    text-overflow: clip; /* Elimina puntos suspensivos */
-    margin-bottom: 5px; /* Espaciado con el resto del contenido */
-    color: #333;
+    font-size: 0.7rem; /* Tamaño más pequeño para la descripción */
+    line-height: 1.2; /* Espaciado ajustado entre líneas */
+    display: -webkit-box; /* Habilitar límite de líneas */
+    -webkit-line-clamp: 3; /* Limitar a 3 líneas */
+    -webkit-box-orient: vertical; /* Orientación vertical */
+    overflow: hidden; /* Ocultar texto adicional */
+    word-break: break-word; /* Ajustar palabras largas */
+    overflow-wrap: break-word; /* Ajustar palabras largas */
   }
 }
+
 
 /* Para navegadores basados en WebKit */
 .books-container::-webkit-scrollbar {
