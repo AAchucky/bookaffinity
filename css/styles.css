@@ -64,7 +64,6 @@ h1 {
     display: -webkit-box; /* Configura el comportamiento de las líneas */
     -webkit-line-clamp: 2; /* Limita la descripción a 2 líneas */
     -webkit-box-orient: vertical; /* Define orientación vertical */
-    overflow: hidden; /* Evita el desbordamiento del contenido */
   }
 }
 
