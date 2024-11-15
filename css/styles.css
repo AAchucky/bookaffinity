@@ -35,19 +35,36 @@ h1 {
     padding: 20px 0;
   }
 
-  /* Especificidad aumentada para que no sobrescriba el selector global .libro */
-  .books-container .libro {
-    width: calc(100% / 3 - 20px);  /* 3 libros por fila */
-    height: 250px; /* Ajusta la altura de los libros */
+  .libro {
+    width: calc(100% / 3 - 10px); /* Tamaño de cada libro en móviles */
+    height: auto; /* Asegura que el contenedor se ajuste dinámicamente */
+    max-height: 280px; /* Limita la altura máxima del contenedor */
+    overflow: hidden; /* Evita el desbordamiento */
   }
 
-  /* Ajusta la altura de las imágenes de portada */
-  .books-container .libro img {
-    height: 120px;  /* Ajusta la altura de la imagen de portada */
-    max-height: 120px;  /* Asegura que no sea mayor que esta altura */
-    object-fit: cover;  /* Mantiene el aspecto adecuado de la imagen */
+  .libro img {
+    height: 100px; /* Ajusta la altura de las imágenes */
+    max-height: 100px; /* Evita que las imágenes sean demasiado altas */
+    object-fit: cover; /* Mantiene el aspecto dentro del contenedor */
+  }
+
+  .libro h3 {
+    font-size: 0.8rem; /* Reduce el tamaño del texto para móviles */
+    white-space: nowrap; /* Evita que el texto se desborde en varias líneas */
+    overflow: hidden; /* Oculta el texto que exceda el contenedor */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos para texto largo */
+  }
+
+  .libro p {
+    font-size: 0.7rem; /* Texto más pequeño para móviles */
+    line-height: 1.2; /* Reduce el espacio entre líneas */
+    display: -webkit-box; /* Configura el comportamiento de las líneas */
+    -webkit-line-clamp: 2; /* Limita la descripción a 2 líneas */
+    -webkit-box-orient: vertical; /* Define orientación vertical */
+    overflow: hidden; /* Evita el desbordamiento del contenido */
   }
 }
+
 
 
 /* Para navegadores basados en WebKit */
