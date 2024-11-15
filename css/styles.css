@@ -30,15 +30,23 @@
     }
 
     /* Adaptación específica solo para pantallas pequeñas */
-       @media (max-width: 768px) {
-       .books-container {
-	padding: 20px 0;
+	@media (max-width: 768px) {
+	  .books-container {
+	    padding: 20px 0;
+	  }
+	
+	  .libro {
+	    width: calc(100% / 4 - 15px); /* Cambia esto para hacer los libros más estrechos */
+	    height: auto; /* Puedes ajustar si quieres limitar la altura */
+	  }
+	  
+	  .libro img {
+	    height: 120px; /* Ajusta la altura de la imagen de portada */
+	    max-height: 120px; /* También puedes añadir un límite de altura */
+	    object-fit: cover; /* Asegura que la imagen mantenga su aspecto dentro del tamaño especificado */
+	  }
 	}
-		
-	.libro {
-	width: calc(100% / 6 - 40px); /* Mostrar 3 libros por fila en horizontal */
-	}
-      }
+
 
     /* Para navegadores basados en WebKit */
     .books-container::-webkit-scrollbar {
