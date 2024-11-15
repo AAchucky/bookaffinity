@@ -1,4 +1,4 @@
-/* Mantener todo igual para pantallas más grandes */
+/* Estilo original intacto */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #e0e0d3;
@@ -114,20 +114,15 @@ h1 {
   color: #333;
 }
 
-/* Estilo original intacto */
+/* Modal y demás elementos intactos */
 
-/* Adaptación para dispositivos móviles */
+/* Adaptación específica solo para pantallas pequeñas */
 @media (max-width: 768px) {
   .books-container {
-    padding: 10px 0;
+    padding: 20px 0;
   }
 
   .libro {
-    width: 120px; /* Reducir el tamaño de los libros proporcionalmente */
-  }
-
-  .scroll-btn {
-    font-size: 2.5rem; /* Ajustar tamaño de flechas */
-    padding: 5px; /* Reducir padding */
+    width: calc(100% / 3 - 20px); /* Mostrar 3 libros por fila en horizontal */
   }
 }
