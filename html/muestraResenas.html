@@ -214,18 +214,14 @@
 
       document.getElementById("volver-libros-button").addEventListener("click", () => {
         const user = auth.currentUser;
-        console.log("Verificando usuario actual en auth.currentUser:", user);
       
         if (user) {
-          console.log("Redirigiendo como usuario autenticado...");
-          window.location.href = `muestraLibros.html?loggedIn=true`;
+          window.location.href = "muestraLibros.html?loggedIn=true";
         } else {
-          console.log("Redirigiendo como invitado...");
-          window.location.href = `muestraLibros.html`;
+          window.location.href = "muestraLibros.html";
         }
       });
-
-
+  
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
       // Verifica si el usuario está logado
       if (!auth.currentUser) {
