@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (user) {
       esInvitado = false; // Usuario logueado
+      const userId = user.uid;
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
@@ -98,11 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
       reviewLink.title = "Inicia sesión para agregar una reseña";
     } else {
       // Habilitar el enlace de agregar reseña para usuarios logueados
-      reviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userName}`;
+      reviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     }
 
-    document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userName}`;
-    document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userName}`;
+    document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
+    document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     
     // Asegurarse de que el enlace "Ver en Google Books" se configure correctamente
     document.getElementById("modal-link").href = infoLink;  // Asignamos correctamente el enlace aquí
