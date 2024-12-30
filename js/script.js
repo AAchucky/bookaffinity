@@ -81,14 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // Función para abrir un modal con información del libro
-  async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId) {
+  async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId, userId) {
     document.getElementById("modal-title").innerText = titulo;
     document.getElementById("modal-author").innerText = autor;
     document.getElementById("modal-description").innerText = descripcion;
     document.getElementById("modal-image").src = portada;
 
     const reviewLink = document.getElementById("modal-review-link");
-    const userId = user.uid;
 
     // Verificar si el usuario es invitado
     if (esInvitado) {
