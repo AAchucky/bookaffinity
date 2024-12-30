@@ -106,9 +106,10 @@
   </div>
 
   <script>
-
+      
       function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
+        const userId = params.get("userId");
         return {
           bookId: params.get('bookId'), // Agrega bookId aquí
           tituloLibro: params.get('titulo'), // También obtén el título para mostrarlo en la interfaz
