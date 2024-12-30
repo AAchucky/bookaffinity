@@ -106,31 +106,6 @@
   </div>
 
   <script>
-
-      document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const loggedIn = params.get('loggedIn') === 'true';
-      console.log("Parámetro loggedIn:", loggedIn);
-      
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            console.log("Usuario autenticado:", user.uid);
-            cargarBiblioteca(user.uid);
-          } else {
-            console.warn("Usuario no autenticado.");
-          }
-        });
-    
-        // Configurar el botón de cierre de sesión
-        document.getElementById("logout-button").addEventListener("click", () => {
-          signOut(auth).then(() => {
-            console.log("Sesión cerrada correctamente.");
-            window.location.href = "/bookaffinity/index.html";
-          }).catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-          });
-        });
-      });
  
       // Al hacer clic en el botón, la página sube al inicio con animación
       document.getElementById("scroll-top-button").addEventListener("click", () => {
@@ -147,7 +122,6 @@
           }
       });
   </script>
-
 
   
   <!-- Enlace al archivo JS -->
