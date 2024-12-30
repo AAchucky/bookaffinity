@@ -213,8 +213,14 @@
     });
 
     document.getElementById("volver-libros-button").addEventListener("click", () => {
-      window.location.href = "muestraLibros.html";
+      const user = auth.currentUser;
+      if (user) {
+        window.location.href = `muestraLibros.html?loggedIn=true`;
+      } else {
+        window.location.href = `muestraLibros.html`;
+      }
     });
+
 
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
       // Verifica si el usuario está logado
