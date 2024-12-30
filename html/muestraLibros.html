@@ -106,6 +106,27 @@
   </div>
 
   <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const loggedIn = params.get('loggedIn') === 'true';
+      
+        if (loggedIn) {
+          // Si el usuario está autenticado, verifica con Firebase
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              console.log("Usuario autenticado:", user.email);
+              cargarBiblioteca(user.uid);
+            } else {
+              console.warn("El estado de autenticación no coincide con el parámetro.");
+            }
+          });
+        } else {
+          console.log("Usuario invitado accediendo.");
+          // Opcional: Mostrar mensaje para iniciar sesión
+        }
+      });
+  
       // Al hacer clic en el botón, la página sube al inicio con animación
       document.getElementById("scroll-top-button").addEventListener("click", () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
