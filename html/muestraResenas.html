@@ -215,12 +215,13 @@
     document.getElementById("volver-libros-button").addEventListener("click", () => {
       const user = auth.currentUser;
       if (user) {
+        // Pasar el estado de autenticación en la URL
         window.location.href = `muestraLibros.html?loggedIn=true`;
       } else {
+        // Redirigir como invitado
         window.location.href = `muestraLibros.html`;
       }
     });
-
 
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
       // Verifica si el usuario está logado
