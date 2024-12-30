@@ -106,7 +106,16 @@
   </div>
 
   <script>
-      
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            console.log("Usuario autenticado:", user.email);
+            cargarBiblioteca(user.uid);
+          } else {
+            console.warn("Usuario no autenticado.");
+          }
+        });
+    
         // Configurar el botón de cierre de sesión
         document.getElementById("logout-button").addEventListener("click", () => {
           signOut(auth).then(() => {
