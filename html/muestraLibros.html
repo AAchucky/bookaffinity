@@ -114,18 +114,36 @@
       
         if (loggedIn) {
           console.log("Intentando verificar autenticación con Firebase...");
-          onAuthStateChanged(auth, (user) => {
+          onAuthStateChanged(auth, async (user) => {
             if (user) {
-              console.log("Usuario autenticado:", user.email);
-              document.getElementById("user-name").innerText = `Usuario: ${user.email}`;
-              document.getElementById("logout-button").style.display = "block";
-              cargarBiblioteca(user.uid);
+              try {
+                // Buscar el nombre de usuario en Firestore
+                const usuarioRef = collection(db, "Usuarios");
+                const usuarioQuery = query(usuarioRef, where("email", "==", user.email)); // Buscamos por el email del usuario autenticado
+                const usuarioSnapshot = await getDocs(usuarioQuery);
+          
+                if (!usuarioSnapshot.empty) {
+                  const usuarioData = usuarioSnapshot.docs[0].data(); // Obtener datos del primer documento
+                  const nombreUsuario = usuarioData.nombreUsuario || "Usuario desconocido";
+          
+                  // Mostrar el nombre de usuario en la interfaz
+                  document.getElementById("user-name").innerText = `Usuario: ${nombreUsuario}`;
+                  document.getElementById("logout-button").style.display = "block";
+                } else {
+                  console.warn("No se encontró un nombre de usuario en Firestore.");
+                  document.getElementById("user-name").innerText = "Usuario: desconocido";
+                }
+              } catch (error) {
+                console.error("Error al buscar el nombre de usuario:", error);
+                document.getElementById("user-name").innerText = "Usuario: error";
+              }
             } else {
-              console.warn("El estado de autenticación no coincide con el parámetro loggedIn.");
+              console.log("Usuario no autenticado o invitado.");
               document.getElementById("user-name").innerText = "Usuario: invitado";
               document.getElementById("logout-button").style.display = "none";
             }
           });
+
         } else {
           console.log("Accediendo como invitado...");
           document.getElementById("user-name").innerText = "Usuario: invitado";
