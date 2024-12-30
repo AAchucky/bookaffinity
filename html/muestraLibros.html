@@ -110,12 +110,12 @@
       function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         return {
-          bookId: params.get('bookId'),
-          titulo: params.get('titulo'),
+          bookId: params.get('bookId'), // Agrega bookId aquí
+          tituloLibro: params.get('titulo'), // También obtén el título para mostrarlo en la interfaz
           userId: params.get('userId'), // Captura el userId si está presente
         };
       }
-      const { bookId, titulo, userId } = getQueryParams();
+      const { bookId, tituloLibro, userId } = getQueryParams();
     
       // Al hacer clic en el botón, la página sube al inicio con animación
       document.getElementById("scroll-top-button").addEventListener("click", () => {
