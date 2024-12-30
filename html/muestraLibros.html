@@ -106,7 +106,17 @@
   </div>
 
   <script>
- 
+
+      function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          bookId: params.get('bookId'),
+          titulo: params.get('titulo'),
+          userId: params.get('userId'), // Captura el userId si está presente
+        };
+      }
+      const { bookId, titulo, userId } = getQueryParams();
+    
       // Al hacer clic en el botón, la página sube al inicio con animación
       document.getElementById("scroll-top-button").addEventListener("click", () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
