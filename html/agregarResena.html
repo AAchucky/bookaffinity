@@ -102,6 +102,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    const userId = params.get("userId");
 
     function getQueryParams() {
       const params = new URLSearchParams(window.location.search);
