@@ -190,9 +190,11 @@
       return {
         bookId: params.get('bookId'),
         tituloLibro: params.get('titulo'),
+        userId: params.get('userId'),
       };
     }
-
+    const { bookId, tituloLibro, userId } = getQueryParams();
+  
     window.onload = async function() {
       const { bookId, tituloLibro } = getQueryParams();
       if (bookId && tituloLibro) {
