@@ -107,25 +107,40 @@
 
   <script>
 
-        document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
         const loggedIn = params.get('loggedIn') === 'true';
       
         if (loggedIn) {
-          // Si el usuario está autenticado, verifica con Firebase
+          // Verificar el estado de autenticación con Firebase
           onAuthStateChanged(auth, (user) => {
             if (user) {
               console.log("Usuario autenticado:", user.email);
+              document.getElementById("user-name").innerText = `Usuario: ${user.email}`;
+              document.getElementById("logout-button").style.display = "block";
               cargarBiblioteca(user.uid);
             } else {
               console.warn("El estado de autenticación no coincide con el parámetro.");
+              document.getElementById("user-name").innerText = "Usuario: invitado";
+              document.getElementById("logout-button").style.display = "none";
             }
           });
         } else {
           console.log("Usuario invitado accediendo.");
-          // Opcional: Mostrar mensaje para iniciar sesión
+          document.getElementById("user-name").innerText = "Usuario: invitado";
+          document.getElementById("logout-button").style.display = "none";
         }
+      
+        // Configurar el botón de cierre de sesión
+        document.getElementById("logout-button").addEventListener("click", () => {
+          signOut(auth).then(() => {
+            window.location.href = "/bookaffinity/index.html";
+          }).catch((error) => {
+            console.error("Error al cerrar sesión:", error);
+          });
+        });
       });
+
   
       // Al hacer clic en el botón, la página sube al inicio con animación
       document.getElementById("scroll-top-button").addEventListener("click", () => {
