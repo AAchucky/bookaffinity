@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("modal-image").src = portada;
 
     const reviewLink = document.getElementById("modal-review-link");
+    const userId = user.uid;
 
     // Verificar si el usuario es invitado
     if (esInvitado) {
