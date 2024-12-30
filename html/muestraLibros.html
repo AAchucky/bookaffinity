@@ -109,7 +109,7 @@
 
         onAuthStateChanged(auth, (user) => {
           if (user) {
-            console.log("Usuario autenticado:", user.email);
+            console.log("Usuario autenticado:", user.uid);
             cargarBiblioteca(user.uid);
           } else {
             console.warn("Usuario no autenticado.");
