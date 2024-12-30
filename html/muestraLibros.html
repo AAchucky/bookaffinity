@@ -107,6 +107,11 @@
 
   <script>
 
+      document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const loggedIn = params.get('loggedIn') === 'true';
+      console.log("Parámetro loggedIn:", loggedIn);
+      
         onAuthStateChanged(auth, (user) => {
           if (user) {
             console.log("Usuario autenticado:", user.uid);
