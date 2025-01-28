@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (user) {
       esInvitado = false; // Usuario logueado
+      console.log('esInvitado:', esInvitado);
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Usuario no logueado
       userNameElement.innerText = "Usuario: invitado";
       logoutButton.style.display = "none";  // Ocultar el botón de cerrar sesión
+      console.log('esInvitado:', esInvitado);
     }
   });
 
