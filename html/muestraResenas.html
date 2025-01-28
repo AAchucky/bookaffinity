@@ -214,9 +214,8 @@
     });
 
       document.getElementById("volver-libros-button").addEventListener("click", () => {
-        const user = auth.currentUser;
-        const url = user ? `muestraLibros.html?loggedIn=true` : `muestraLibros.html`;
-        window.location.href = url;
+        const userId = sessionStorage.getItem('userId'); // Recuperar el userId desde sessionStorage
+        window.location.href = `muestraLibros.html?userId=${userId || 'invitado'}`;
       });
 
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
