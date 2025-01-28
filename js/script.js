@@ -102,9 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Habilitar el enlace de agregar reseña para usuarios logueados
       reviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     }
-
-    const userId = sessionStorage.getItem('userId');
-    console.log('userId en sessionStorage antes de generar el enlace:', userId);
     
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
