@@ -192,6 +192,7 @@
 
         // Guarda el userId en sessionStorage
         sessionStorage.setItem('userId', userCredential.user.uid); // Guarda el userId en sessionStorage
+        console.log('userId guardado en sessionStorage:', user.uid);  // Log para comprobar
         
         // Redirigir al usuario a otra página o mostrar contenido
         window.location.href = "html/muestraLibros.html"; // Cambia esto según sea necesario
