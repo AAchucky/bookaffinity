@@ -214,8 +214,9 @@
     });
 
       document.getElementById("volver-libros-button").addEventListener("click", () => {
-        const userId = sessionStorage.getItem('userId'); // Recuperar el userId desde sessionStorage
-        window.location.href = `muestraLibros.html?userId=${userId || 'invitado'}`;
+          const userId = sessionStorage.getItem('userId'); // Recuperar el userId desde sessionStorage
+          console.log("userId antes de la redirección:", userId); // Añadir un log para depurar
+          window.location.href = `muestraLibros.html?userId=${userId || 'invitado'}`;
       });
 
       document.getElementById("agregar-reseña-button").addEventListener("click", () => {
