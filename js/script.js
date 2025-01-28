@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
 // Configuración de Firebase
@@ -22,6 +22,7 @@ const auth = getAuth(app);
 let esInvitado = true; // Variable para verificar si el usuario es invitado
 
 document.addEventListener("DOMContentLoaded", () => {
+  
   // Estado de autenticación
   onAuthStateChanged(auth, async (user) => {
     const userNameElement = document.getElementById("user-name");
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const userId = sessionStorage.getItem('userId');
     console.log('userId en sessionStorage en Estado de autenticación:', userId);
-
+    
     if (user) {
       esInvitado = false; // Usuario logueado
       console.log('esInvitado:', esInvitado);
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const docSnap = await getDoc(docRef);
         const userName = docSnap.exists() ? docSnap.data().nombre : "Desconocido";
         userNameElement.innerText = `Usuario: ${userName}`;
-
+        
         logoutButton.style.display = "block";  // Mostrar el botón de cerrar sesión
       } catch (error) {
         console.error("Error al obtener el nombre del usuario:", error);
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(url);
       const data = await response.json();
       console.log("Respuesta de la API:", data); // Log de la respuesta
-
+  
       if (data.items && data.items.length > 0) {
         mostrarLibros(data.items, containerId);
       } else {
@@ -83,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al cargar libros:", error);
     }
   }
+
 
   // Función para abrir un modal con información del libro
   async function abrirModal(titulo, autor, descripcion, portada, infoLink, bookId, userId) {
@@ -105,46 +107,46 @@ document.addEventListener("DOMContentLoaded", () => {
       // Habilitar el enlace de agregar reseña para usuarios logueados
       reviewLink.href = `agregarResena.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     }
-
+    
     document.getElementById("modal-view-reviews-link").href = `muestraResenas.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
     document.getElementById("modal-add-to-library-link").href = `agregarBiblioteca.html?bookId=${bookId}&titulo=${encodeURIComponent(titulo)}&userId=${userId}`;
-
+    
     // Asegurarse de que el enlace "Ver en Google Books" se configure correctamente
     document.getElementById("modal-link").href = infoLink;  // Asignamos correctamente el enlace aquí
 
     try {
-      // Buscar las reseñas en Firestore para este libro específico
-      const reseñasRef = collection(db, "Resenas");
-      const q = query(reseñasRef, where("libro_id", "==", bookId));
-      const querySnapshot = await getDocs(q);
+    // Buscar las reseñas en Firestore para este libro específico
+    const reseñasRef = collection(db, "Resenas");
+    const q = query(reseñasRef, where("libro_id", "==", bookId));
+    const querySnapshot = await getDocs(q);
 
-      let totalRating = 0;
-      let ratingCount = 0;
+    let totalRating = 0;
+    let ratingCount = 0;
 
-      // Calcular la puntuación media y el total de votos
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.puntuacion) {
-          totalRating += data.puntuacion;  // Sumar la puntuación de cada reseña
-          ratingCount += 1;  // Contar la reseña
-        }
-      });
+    // Calcular la puntuación media y el total de votos
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.puntuacion) {
+        totalRating += data.puntuacion;  // Sumar la puntuación de cada reseña
+        ratingCount += 1;  // Contar la reseña
+      }
+    });
 
-      // Si hay reseñas, calcular la puntuación media
-      const averageRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "N/A";
+    // Si hay reseñas, calcular la puntuación media
+    const averageRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "N/A";
 
-      document.getElementById("average-rating").innerText = averageRating;
-      document.getElementById("total-votes").innerText = ratingCount;
+    document.getElementById("average-rating").innerText = averageRating;
+    document.getElementById("total-votes").innerText = ratingCount;
 
-      // Mostrar las estrellas de la puntuación media
-      mostrarEstrellas(averageRating);
+    // Mostrar las estrellas de la puntuación media
+    mostrarEstrellas(averageRating);
 
-    } catch (error) {
-      console.error("Error al obtener las reseñas desde Firestore:", error);
-      document.getElementById("average-rating").innerText = "N/A";
-      document.getElementById("total-votes").innerText = "0";
-      mostrarEstrellas(0);
-    }
+  } catch (error) {
+    console.error("Error al obtener las reseñas desde Firestore:", error);
+    document.getElementById("average-rating").innerText = "N/A";
+    document.getElementById("total-votes").innerText = "0";
+    mostrarEstrellas(0);
+  }
     // Mostrar el modal
     document.getElementById("book-modal").style.display = "flex";
   }
@@ -153,12 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function mostrarEstrellas(puntuacion) {
     const starContainer = document.getElementById("star-rating");
     starContainer.innerHTML = ""; // Limpiar las estrellas anteriores
-
+  
     // La puntuación se representa en una escala de 0 a 10
     const fullStars = Math.floor(puntuacion);  // Estrellas completas
     const halfStar = puntuacion % 1 >= 0.5 ? 1 : 0;  // Verificar si hay una estrella parcial
     const emptyStars = 10 - fullStars - halfStar;  // Rellenar con estrellas vacías el resto
-
+  
     // Agregar estrellas completas
     for (let i = 0; i < fullStars; i++) {
       const star = document.createElement("span");
@@ -166,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       star.innerHTML = "&#9733;";  // Código de estrella completa
       starContainer.appendChild(star);
     }
-
+  
     // Agregar estrella parcial si corresponde
     if (halfStar) {
       const star = document.createElement("span");
@@ -174,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       star.innerHTML = "&#9733;";  // Estrella parcialmente llena con un gradiente
       starContainer.appendChild(star);
     }
-
+  
     // Agregar estrellas vacías
     for (let i = 0; i < emptyStars; i++) {
       const star = document.createElement("span");
@@ -188,16 +190,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (query) {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${booksApiKey}`;
       console.log("URL de búsqueda:", url); // Log de la URL para depuración
-
+  
       // Asegurarse de que los resultados sean visibles
       document.getElementById("search-results-title").style.display = "block";
       document.getElementById("search-results-section").style.display = "block";
-
+  
       cargarLibros(url, "resultados-busqueda-container");
     } else {
       alert("Por favor, ingresa un término de búsqueda.");
     }
   }
+
 
   // Función para mostrar los libros en un contenedor
   function mostrarLibros(libros, containerId) {
@@ -206,10 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Si no hay libros, mostrar un mensaje
     if (!libros || libros.length === 0) {
-      container.innerHTML = "<p>No se encontraron libros.</p>";
-      return;
+    container.innerHTML = "<p>No se encontraron libros.</p>";
+    return;
     }
-
+    
     libros.forEach(libro => {
       const libroDiv = document.createElement("div");
       libroDiv.classList.add("libro");
@@ -219,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const descripcion = libro.volumeInfo.description || 'Descripción no disponible';
       const portada = libro.volumeInfo.imageLinks ? libro.volumeInfo.imageLinks.thumbnail : 'https://books.google.com/googlebooks/images/no_cover_thumb.gif';
       const infoLink = libro.volumeInfo.infoLink;
-      const bookId = libro.id;
+      const bookId = libro.id; 
 
       libroDiv.innerHTML = `
         <img src="${portada}" alt="Portada del libro">
@@ -228,10 +231,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><strong>Autor:</strong> ${autor}</p>
       `;
 
-      // Interceptar el clic y redirigir sin recargar la página
-      libroDiv.addEventListener("click", (e) => {
-        e.preventDefault(); // Prevenir la acción predeterminada del clic
-        window.location.replace(infoLink); // Redirigir sin recargar
+      libroDiv.addEventListener("click", () => {
+        abrirModal(titulo, autor, descripcion, portada, infoLink, bookId);
       });
 
       container.appendChild(libroDiv);
@@ -318,7 +319,18 @@ document.addEventListener("DOMContentLoaded", () => {
     container.scrollBy({ left: 200, behavior: 'smooth' });
   });
 
-  // Cargar las secciones iniciales
+  window.addEventListener('beforeunload', () => {
+  const auth = getAuth(app);
+  if (auth.currentUser) {
+    signOut(auth).then(() => {
+      console.log("Sesión cerrada automáticamente al cerrar el navegador.");
+    }).catch(error => {
+      console.error("Error al cerrar sesión automáticamente:", error);
+    });
+  }
+});
+
+  // Cargar novedades y recomendaciones
   cargarNovedades();
   cargarRecomendaciones();
 });
