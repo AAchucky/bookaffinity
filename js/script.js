@@ -28,10 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const userNameElement = document.getElementById("user-name");
     const logoutButton = document.getElementById("logout-button");
 
+    const userId = sessionStorage.getItem('userId');
+    console.log('userId en sessionStorage antes de generar el enlace:', userId);
+    
     if (user) {
       esInvitado = false; // Usuario logueado
-      const userId = sessionStorage.getItem('userId');
-      console.log('userId en sessionStorage antes de generar el enlace:', userId);
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
