@@ -106,7 +106,45 @@
   </div>
 
   <script>
-      
+
+      // Función para obtener el userId 
+      function getUserId() {
+        const params = new URLSearchParams(window.location.search);
+        let userId = params.get("userId");
+  
+        // Si no hay userId en la URL, intentamos obtenerlo de sessionStorage
+        if (!userId) {
+          userId = sessionStorage.getItem("userId");
+        }
+        
+        return userId;
+      }
+
+      // Función para actualizar el estado del usuario 
+      function updateUserStatus() {
+        const userId = getUserId();
+        const userName = userId ? `Usuario: ${userId}` : 'Usuario: invitado';
+  
+        document.getElementById('user-name').textContent = userName;
+  
+        if (userId) {
+          document.getElementById('logout-button').style.display = 'block'; // Mostrar botón de cerrar sesión
+        } else {
+          document.getElementById('logout-button').style.display = 'none'; // Ocultar botón si es invitado
+        }
+      }
+
+      // Llamar a la función para actualizar el estado del usuario
+      updateUserStatus();
+
+      // Acción del botón de cerrar sesión */
+      document.getElementById('logout-button').addEventListener('click', () => {
+        // Borrar el userId de sessionStorage al cerrar sesión
+        sessionStorage.removeItem("userId");
+        updateUserStatus(); // Actualizar el estado del usuario (como invitado)
+        alert("Has cerrado sesión");
+      });
+    
       function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         const userId = params.get("userId");
