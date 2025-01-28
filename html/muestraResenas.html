@@ -115,6 +115,10 @@
       }
     });
 
+    // Comprobar que el userId sigue presente en sessionStorage al entrar en muestraReseñas.html
+    const userId = sessionStorage.getItem('userId');
+    console.log("userId en sessionStorage al entrar en muestraReseñas:", userId);  // Log para comprobar
+
     async function obtenerReseñasYActualizarTitulo(tituloLibro) {
       document.getElementById("page-title").textContent = `Reseñas de ${tituloLibro}`;
       document.getElementById("titulo-resenas").textContent = `Reseñas de "${tituloLibro}"`;
