@@ -189,6 +189,9 @@
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log("Usuario inició sesión:", userCredential.user);
         alert(`¡Bienvenido, ${userDoc.data().nombre}!`);
+
+        // Guarda el userId en sessionStorage
+        sessionStorage.setItem('userId', userCredential.user.uid); // Guarda el userId en sessionStorage
         
         // Redirigir al usuario a otra página o mostrar contenido
         window.location.href = "html/muestraLibros.html"; // Cambia esto según sea necesario
