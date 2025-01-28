@@ -29,11 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutButton = document.getElementById("logout-button");
 
     const userId = sessionStorage.getItem('userId');
-    console.log('userId en sessionStorage antes de generar el enlace:', userId);
+    console.log('userId en sessionStorage en Estado de autenticación:', userId);
     
     if (user) {
       esInvitado = false; // Usuario logueado
       console.log('esInvitado:', esInvitado);
+      sessionStorage.setItem("userId", user.uid); // Guardar el ID del usuario
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
@@ -50,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userNameElement.innerText = "Usuario: invitado";
       logoutButton.style.display = "none";  // Ocultar el botón de cerrar sesión
       console.log('esInvitado:', esInvitado);
+      sessionStorage.removeItem("userId"); // Limpiar el almacenamiento
     }
   });
 
