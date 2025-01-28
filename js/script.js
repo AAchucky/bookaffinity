@@ -117,6 +117,27 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("book-modal").style.display = "flex";
     }
 
+    // Manejo de clics en los enlaces
+    const viewReviewsLink = document.getElementById("modal-view-reviews-link");
+    const addToLibraryLink = document.getElementById("modal-add-to-library-link");
+    const googleBooksLink = document.getElementById("modal-link");
+  
+    // Redirigir sin cerrar la sesión
+    viewReviewsLink.addEventListener("click", (e) => {
+      e.preventDefault();  // Prevenir la acción por defecto
+      window.location.replace(viewReviewsLink.href); // Redirigir sin recargar la página
+    });
+  
+    addToLibraryLink.addEventListener("click", (e) => {
+      e.preventDefault();  // Prevenir la acción por defecto
+      window.location.replace(addToLibraryLink.href); // Redirigir sin recargar la página
+    });
+  
+    googleBooksLink.addEventListener("click", (e) => {
+      e.preventDefault();  // Prevenir la acción por defecto
+      window.location.replace(googleBooksLink.href); // Redirigir sin recargar la página
+    });
+
     // Función para mostrar estrellas
     function mostrarEstrellas(puntuacion) {
       const starContainer = document.getElementById("star-rating");
