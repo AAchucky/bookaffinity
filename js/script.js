@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (user) {
       esInvitado = false; // Usuario logueado
-      const userId = user.uid;
+      const userId = sessionStorage.getItem('userId');
+      console.log('userId en sessionStorage antes de generar el enlace:', userId);
       try {
         const docRef = doc(db, "Usuarios", user.uid);
         const docSnap = await getDoc(docRef);
