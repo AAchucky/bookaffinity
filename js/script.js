@@ -126,17 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
     viewReviewsLink.addEventListener("click", (e) => {
       e.preventDefault();  // Prevenir la acción por defecto
       window.location.replace(viewReviewsLink.href); // Redirigir sin recargar la página
-    });
+    })
   
     addToLibraryLink.addEventListener("click", (e) => {
       e.preventDefault();  // Prevenir la acción por defecto
       window.location.replace(addToLibraryLink.href); // Redirigir sin recargar la página
-    });
+    })
   
     googleBooksLink.addEventListener("click", (e) => {
       e.preventDefault();  // Prevenir la acción por defecto
       window.location.replace(googleBooksLink.href); // Redirigir sin recargar la página
-    });
+    })
 
     // Función para mostrar estrellas
     function mostrarEstrellas(puntuacion) {
