@@ -109,16 +109,20 @@
 
       // Función para obtener el userId 
       function getUserId() {
-        const params = new URLSearchParams(window.location.search);
-        let userId = params.get("userId");
-  
-        // Si no hay userId en la URL, intentamos obtenerlo de sessionStorage
-        if (!userId) {
-          userId = sessionStorage.getItem("userId");
-        }
-        
-        return userId;
+          const params = new URLSearchParams(window.location.search);
+          let userId = params.get("userId");
+      
+          console.log("userId desde URL:", userId); // Añadir un log para depurar
+      
+          // Si no hay userId en la URL, intentamos obtenerlo de sessionStorage
+          if (!userId) {
+              userId = sessionStorage.getItem("userId");
+              console.log("userId desde sessionStorage:", userId); // Añadir un log para depurar
+          }
+      
+          return userId || 'invitado'; // Si no hay userId, devolver 'invitado'
       }
+
 
       // Función para actualizar el estado del usuario 
       function updateUserStatus() {
